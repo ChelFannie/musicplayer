@@ -34,8 +34,15 @@ export default {
       currentPageIndex: 0
     }
   },
+  watch: {
+    // 'currentPageIndex': {
+    //   handler: function (val) {
+    //     console.log(val)
+    //   },
+    //   deep: true
+    // }
+  },
   created () {
-
   },
   mounted () {
     // 获取DOM，最好是在setTimeout中
@@ -43,11 +50,33 @@ export default {
       this._setSliderWidth()
       this._initDots()
       this._initSlider()
-      this._play()
+      if (this.autoPlay) {
+        this._play()
+      }
+    })
+    window.addEventListener('resize', () => {
+      if (!this.slider) {
+        return
+      }
+      // 如果视口改变，重新计算宽度
+      this._setSliderWidth()
+      // 刷新页面
+      this.slider.refresh(true)
     })
   },
+  activated () {
+    if (this.autoPlay) {
+      this._play()
+    }
+  },
+  deactivated () {
+    clearTimeout(this.timer)
+  },
+  beforeDestroy () {
+    clearTimeout(this.timer)
+  },
   methods: {
-    _setSliderWidth () {
+    _setSliderWidth (isResize) {
       this.children = this.$refs.sliderGroup.children
       let sliderWidth = this.$refs.slider.clientWidth
       let width = 0
@@ -57,7 +86,7 @@ export default {
         child.style.width = sliderWidth + 'px'
         width += sliderWidth
       }
-      if (this.loop) {
+      if (this.loop && !isResize) {
         width += 2 * sliderWidth
       }
       this.$refs.sliderGroup.style.width = width + 'px'

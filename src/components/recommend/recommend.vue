@@ -1,47 +1,52 @@
 <template>
  <div class="recommend">
-   <div class="recommend-content">
-     <div class="slider-wrapper" v-if="recommends.length">
-       <slider>
-         <div v-for="(item, index) in recommends" :key="index">
-           <a :href="item.linkUrl">
-             <img :src="item.picUrl" alt="">
-           </a>
-         </div>
-       </slider>
+   <scroll class="recommend-content" :data="discList">
+     <div>
+      <div class="slider-wrapper" v-if="recommends.length">
+        <slider>
+          <div v-for="(item, index) in recommends" :key="index">
+            <a :href="item.linkUrl">
+              <img :src="item.picUrl" alt="" @load="loadImage">
+            </a>
+          </div>
+        </slider>
+      </div>
+      <div class="recommend-list">
+        <h1 class="list-title">热门歌曲推荐</h1>
+        <ul>
+          <li v-for="(item, index) in discList" :key="index" class="item">
+            <div class="icon">
+              <img width="60" height="60" :src="item.imgurl" alt="">
+            </div>
+            <div class="text">
+              <h2 class="name">{{item.creator.name}}</h2>
+              <p class="desc">{{item.dissname}}</p>
+            </div>
+          </li>
+        </ul>
+      </div>
      </div>
-     <div class="recommend-list">
-       <h1 class="list-title">热门歌曲推荐</h1>
-       <ul>
-         <li v-for="(item, index) in discList" :key="index" class="item">
-           <div class="icon">
-             <img width="60" height="60" :src="item.imgurl" alt="">
-           </div>
-           <div class="text">
-             <h2 class="name">{{item.creator.name}}</h2>
-             <p class="desc">{{item.dissname}}</p>
-           </div>
-         </li>
-       </ul>
-     </div>
-   </div>
+   </scroll>
  </div>
 </template>
 
 <script>
+import Scroll from 'base/scroll/scroll'
 import Slider from 'base/slider/slider'
 import {getRecommend, getDiscList} from 'api/recommend.js'
 import {ERR_OK} from 'api/config.js'
 export default {
   name: 'recommend',
   components: {
-    Slider
+    Slider,
+    Scroll
   },
   data () {
     return {
       msg: 'recommend',
       recommends: [],
-      discList: []
+      discList: [],
+      checkLoaded: false
     }
   },
   created () {
@@ -62,6 +67,14 @@ export default {
           this.discList = res.data.list
         }
       })
+    },
+    // 解决图片加载缓慢，滚动不能执行的问题
+    // 因为轮播图的高度是由图片的高度撑开，所以只要有一张图片加载完全，就重新计算滚动高度
+    loadImage () {
+      if (!this.checkLoaded) {
+        this.$refs.scroll.refresh()
+        this.checkLoaded = true
+      }
     }
   }
 }

@@ -6,7 +6,8 @@
         <slider>
           <div v-for="(item, index) in recommends" :key="index">
             <a :href="item.linkUrl">
-              <img :src="item.picUrl" alt="" @load="loadImage">
+              <!-- 如果页面上有一些特定的元素不需要使用fastclick来立刻触发点击事件，可以在元素的class上添加needsclick -->
+              <img class="needsclick" :src="item.picUrl" alt="" @load="loadImage">
             </a>
           </div>
         </slider>

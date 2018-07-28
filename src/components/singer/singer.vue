@@ -27,7 +27,7 @@ export default {
       getSingerList().then(res => {
         if (res.code === ERR_OK) {
           this.singers = res.data.list
-          this._normalizeSinger(this.singers)
+          console.log(this._normalizeSinger(this.singers))
         }
       })
     },
@@ -75,6 +75,20 @@ export default {
       })
       // console.log(map)
       // 以上结果得到的是一个对象，但是因为vue遍历对象是无序的，所以要换成有序的数组
+      let hot = []
+      let ret = []
+      for (let key in map) {
+        let val = map[key]
+        if (val.title.match(/[a-zA-Z]/)) {
+          ret.push(val)
+        } else if (val.title === HOT_NAME) {
+          hot.push(val)
+        }
+      }
+      ret.sort((a, b) => {
+        return a.title.charCodeAt(0) - b.title.charCodeAt(0)
+      })
+      return hot.concat(ret)
     }
   }
 }

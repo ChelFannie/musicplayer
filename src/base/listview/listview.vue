@@ -11,6 +11,11 @@
        </ul>
      </li>
    </ul>
+   <div class="list-shortcut">
+     <ul>
+       <li class="item" v-for="(item, index) in shortcutList" :key="index">{{item}}</li>
+     </ul>
+   </div>
  </scroll>
 </template>
 
@@ -29,6 +34,14 @@ export default {
   },
   components: {
     Scroll
+  },
+  computed: {
+    // 得到右侧的导航条
+    shortcutList () {
+      return this.data.map(group => {
+        return group.title.substr(0, 1)
+      })
+    }
   },
   data () {
     return {
@@ -73,4 +86,21 @@ export default {
         margin-left 20px
         color: $color-text-l
         font-size: $font-size-medium
+  .list-shortcut
+    position absolute
+    z-index 30
+    right 0
+    top 50%
+    transform translateY(-50%)
+    width 20px
+    padding 20px 0
+    border-radius 10px
+    text-align center
+    background $color-background-d
+    font-family Helvetica
+    .item
+      padding 3px
+      line-height 1
+      color: $color-text-l
+      font-size: $font-size-small
 </style>

@@ -1,7 +1,7 @@
 <template>
- <scroll class="listview" :data="data">
+ <scroll class="listview" :data="data" ref="listview">
    <ul>
-     <li v-for="(group, index) in data" :key="index" class="list-group">
+     <li v-for="(group, index) in data" :key="index" class="list-group" ref="listGrop">
        <h2 class="list-group-title">{{group.title}}</h2>
        <ul>
          <li class="list-group-item" v-for="(item, index1) in group.items" :key="index1">
@@ -13,7 +13,7 @@
    </ul>
    <div class="list-shortcut">
      <ul>
-       <li class="item" v-for="(item, index) in shortcutList" :key="index">{{item}}</li>
+       <li class="item" v-for="(item, index) in shortcutList" :key="index" @touchstart.stop.prevent="onShortcutTouchStart(index, $event)" @touchmove.stop.prevent="onShortcutTouchMove($event)">{{item}}</li>
      </ul>
    </div>
  </scroll>
@@ -21,6 +21,11 @@
 
 <script>
 import Scroll from 'base/scroll/scroll'
+// import {getData} from 'common/js/dom.js'
+
+// const TITLE_HEIGHT = 30
+// 导航每个元素的高度
+const ANCHOR_HEIGHT = 18
 export default {
   props: {
     data: {
@@ -49,10 +54,31 @@ export default {
     }
   },
   created () {
-
+    this.touch = {}
   },
   methods: {
-
+    onShortcutTouchStart (index, e) {
+      // this.$refs.listview.scrollToElement(this.$refs.listGrop[index], 0)
+      this._scrollTo(index)
+      let firstTouch = e.touches[0]
+      this.touch.y1 = firstTouch.pageY
+      this.touch.anchorIndex = index
+    },
+    onShortcutTouchMove (e) {
+      let firstTouch = e.touches[0]
+      this.touch.y2 = firstTouch.pageY
+      // 在y轴的偏移量
+      let delta1 = this.touch.y2 - this.touch.y1
+      // 计算偏移了几个字母值，并去零取整
+      let delta = delta1 / ANCHOR_HEIGHT | 0
+      // 得到移动后手离开屏幕的字母的index
+      let anchorIndex = this.touch.anchorIndex + delta
+      // this.$refs.listview.scrollToElement(this.$refs.listGrop[anchorIndex], 0)
+      this._scrollTo(anchorIndex)
+    },
+    _scrollTo (index) {
+      this.$refs.listview.scrollToElement(this.$refs.listGrop[index], 0)
+    }
   }
 }
 </script>

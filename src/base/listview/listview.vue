@@ -5,7 +5,7 @@
        <h2 class="list-group-title">{{group.title}}</h2>
        <ul>
          <li class="list-group-item" v-for="(item, index1) in group.items" :key="index1">
-           <img class="avatar" :src="item.avatar" alt="">
+           <img class="avatar" v-lazy="item.avatar" alt="">
            <span class="name">{{item.name}}</span>
          </li>
        </ul>

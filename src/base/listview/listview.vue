@@ -1,5 +1,11 @@
 <template>
- <scroll class="listview" :data="data" ref="listview">
+ <scroll
+  class="listview"
+  :data="data"
+  :listen-scroll="listenScroll"
+  :probe-type="probeType"
+  ref="listview"
+  @scroll="scroll">
    <ul>
      <li v-for="(group, index) in data" :key="index" class="list-group" ref="listGrop">
        <h2 class="list-group-title">{{group.title}}</h2>
@@ -13,7 +19,13 @@
    </ul>
    <div class="list-shortcut">
      <ul>
-       <li class="item" v-for="(item, index) in shortcutList" :key="index" @touchstart.stop.prevent="onShortcutTouchStart(index, $event)" @touchmove.stop.prevent="onShortcutTouchMove($event)">{{item}}</li>
+       <li
+        class="item"
+        v-for="(item, index) in shortcutList"
+        :key="index"
+        @touchstart.stop.prevent="onShortcutTouchStart(index, $event)"
+        @touchmove.stop.prevent="onShortcutTouchMove($event)"
+        :class="{'current': currentIndex === index}">{{item}}</li>
      </ul>
    </div>
  </scroll>
@@ -27,6 +39,9 @@ import Scroll from 'base/scroll/scroll'
 // 导航每个元素的高度
 const ANCHOR_HEIGHT = 18
 export default {
+  components: {
+    Scroll
+  },
   props: {
     data: {
       type: Array,
@@ -37,9 +52,6 @@ export default {
       }
     }
   },
-  components: {
-    Scroll
-  },
   computed: {
     // 得到右侧的导航条
     shortcutList () {
@@ -48,13 +60,45 @@ export default {
       })
     }
   },
+  watch: {
+    data () {
+      this.$nextTick(() => {
+        this._calculateHeight()
+      })
+      // setTimeout(() => {
+      //   this._calculateHeight()
+      // }, 20)
+    },
+    scrollY (newY) {
+      const listHeight = this.listHeight
+      // 当滚动到顶部，newY>0
+      if (newY > 0) {
+        this.currentIndex = 0
+        return
+      }
+      // 在中间部分滚动
+      for (let i = 0; i < listHeight.length - 1; i++) {
+        let height1 = listHeight[i]
+        let height2 = listHeight[i + 1]
+        if (-newY >= height1 && -newY < height2) {
+          this.currentIndex = i
+          console.log(this.currentIndex)
+          return
+        }
+      }
+    }
+  },
   data () {
     return {
-
+      scrollY: -1,
+      currentIndex: 0
     }
   },
   created () {
     this.touch = {}
+    this.listenScroll = true
+    this.listHeight = []
+    this.probeType = 3
   },
   methods: {
     onShortcutTouchStart (index, e) {
@@ -76,8 +120,23 @@ export default {
       // this.$refs.listview.scrollToElement(this.$refs.listGrop[anchorIndex], 0)
       this._scrollTo(anchorIndex)
     },
+    scroll (position) {
+      // console.log(position)
+      this.scrollY = position.y
+    },
     _scrollTo (index) {
       this.$refs.listview.scrollToElement(this.$refs.listGrop[index], 0)
+    },
+    _calculateHeight () {
+      this.listHeight = []
+      const list = this.$refs.listGrop
+      let height = 0
+      this.listHeight.push(height)
+      for (let i = 0; i < list.length; i++) {
+        let item = list[i]
+        height += item.clientHeight
+        this.listHeight.push(height)
+      }
     }
   }
 }
@@ -129,4 +188,6 @@ export default {
       line-height 1
       color: $color-text-l
       font-size: $font-size-small
+      &.current
+        color: $color-theme
 </style>

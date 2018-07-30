@@ -82,10 +82,12 @@ export default {
         let height2 = listHeight[i + 1]
         if (-newY >= height1 && -newY < height2) {
           this.currentIndex = i
-          console.log(this.currentIndex)
+          // console.log(this.currentIndex)
           return
         }
       }
+      // 当滚动到底部，且-newY大于最后一个元素的上限
+      // this.currentIndex = listHeight.length - 2
     }
   },
   data () {
@@ -98,6 +100,7 @@ export default {
     this.touch = {}
     this.listenScroll = true
     this.listHeight = []
+    // probeType必须是3才能实时得到滚动效果
     this.probeType = 3
   },
   methods: {
@@ -125,6 +128,8 @@ export default {
       this.scrollY = position.y
     },
     _scrollTo (index) {
+      // 点击右侧导航，得到scrollY，再检测scrollY就可以让左侧列表到达相应位置
+      this.scrollY = -this.listHeight[index]
       this.$refs.listview.scrollToElement(this.$refs.listGrop[index], 0)
     },
     _calculateHeight () {

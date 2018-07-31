@@ -10,7 +10,11 @@
       <li v-for="(group, index) in data" :key="index" class="list-group" ref="listGrop">
         <h2 class="list-group-title">{{group.title}}</h2>
         <ul>
-          <li class="list-group-item" v-for="(item, index1) in group.items" :key="index1">
+          <li
+            class="list-group-item"
+            v-for="(item, index1) in group.items"
+            :key="index1"
+            @click="selectItem(item)">
             <img class="avatar" v-lazy="item.avatar" alt="">
             <span class="name">{{item.name}}</span>
           </li>
@@ -130,6 +134,9 @@ export default {
     this.probeType = 3
   },
   methods: {
+    selectItem (item) {
+      this.$emit('select', item)
+    },
     onShortcutTouchStart (index, e) {
       // this.$refs.listview.scrollToElement(this.$refs.listGrop[index], 0)
       this._scrollTo(index)

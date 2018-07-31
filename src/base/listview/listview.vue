@@ -1,41 +1,45 @@
 <template>
- <scroll
+  <scroll
   class="listview"
   :data="data"
   :listen-scroll="listenScroll"
   :probe-type="probeType"
   ref="listview"
   @scroll="scroll">
-   <ul>
-     <li v-for="(group, index) in data" :key="index" class="list-group" ref="listGrop">
-       <h2 class="list-group-title">{{group.title}}</h2>
-       <ul>
-         <li class="list-group-item" v-for="(item, index1) in group.items" :key="index1">
-           <img class="avatar" v-lazy="item.avatar" alt="">
-           <span class="name">{{item.name}}</span>
-         </li>
-       </ul>
-     </li>
-   </ul>
-   <div class="list-shortcut">
-     <ul>
-       <li
+    <ul>
+      <li v-for="(group, index) in data" :key="index" class="list-group" ref="listGrop">
+        <h2 class="list-group-title">{{group.title}}</h2>
+        <ul>
+          <li class="list-group-item" v-for="(item, index1) in group.items" :key="index1">
+            <img class="avatar" v-lazy="item.avatar" alt="">
+            <span class="name">{{item.name}}</span>
+          </li>
+        </ul>
+      </li>
+    </ul>
+    <div class="list-shortcut">
+      <ul>
+        <li
         class="item"
         v-for="(item, index) in shortcutList"
         :key="index"
         @touchstart.stop.prevent="onShortcutTouchStart(index, $event)"
         @touchmove.stop.prevent="onShortcutTouchMove($event)"
         :class="{'current': currentIndex === index}">{{item}}</li>
-     </ul>
-   </div>
-   <div class="list-fixed">
-     <div class="fixed-title" ref="fixedTitle" v-show="fixedTitle">{{fixedTitle}}</div>
-   </div>
- </scroll>
+      </ul>
+    </div>
+    <div class="list-fixed">
+      <div class="fixed-title" ref="fixedTitle" v-show="fixedTitle">{{fixedTitle}}</div>
+    </div>
+    <div v-show="!data.length" class="loading-container">
+      <loading></loading>
+    </div>
+  </scroll>
 </template>
 
 <script>
 import Scroll from 'base/scroll/scroll'
+import Loading from 'base/loading/loading'
 // import {getData} from 'common/js/dom.js'
 // 标题栏的高度
 const TITLE_HEIGHT = 30
@@ -43,7 +47,8 @@ const TITLE_HEIGHT = 30
 const ANCHOR_HEIGHT = 18
 export default {
   components: {
-    Scroll
+    Scroll,
+    Loading
   },
   props: {
     data: {
@@ -228,4 +233,9 @@ export default {
       font-size $font-size-small
       color $color-text-l
       background $color-highlight-background
+  .loading-container
+    position: absolute
+    width: 100%
+    top: 50%
+    transform: translateY(-50%)
 </style>

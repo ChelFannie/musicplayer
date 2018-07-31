@@ -29,7 +29,7 @@
      </ul>
    </div>
    <div class="list-fixed">
-     <div class="fixed-title" v-show="fixedTitle">{{fixedTitle}}</div>
+     <div class="fixed-title" ref="fixedTitle" v-show="fixedTitle">{{fixedTitle}}</div>
    </div>
  </scroll>
 </template>
@@ -37,8 +37,8 @@
 <script>
 import Scroll from 'base/scroll/scroll'
 // import {getData} from 'common/js/dom.js'
-
-// const TITLE_HEIGHT = 30
+// 标题栏的高度
+const TITLE_HEIGHT = 30
 // 导航每个元素的高度
 const ANCHOR_HEIGHT = 18
 export default {
@@ -79,7 +79,9 @@ export default {
       // }, 20)
     },
     scrollY (newY) {
+      // console.log(newY)
       const listHeight = this.listHeight
+      // console.log(this.listHeight)
       // 当滚动到顶部，newY>0
       if (newY > 0) {
         this.currentIndex = 0
@@ -91,18 +93,28 @@ export default {
         let height2 = listHeight[i + 1]
         if (-newY >= height1 && -newY < height2) {
           this.currentIndex = i
+          // 滚动区块的上限和滚动位置的滚动差 newY为负数，所以相加
+          this.diff = height2 + newY
           // console.log(this.currentIndex)
           return
         }
       }
       // 当滚动到底部，且-newY大于最后一个元素的上限
       // this.currentIndex = listHeight.length - 2
+    },
+    diff (newVal) {
+      let fixedTop = (newVal > 0 && newVal < TITLE_HEIGHT) ? newVal - TITLE_HEIGHT : 0
+      this.$refs.fixedTitle.style.transform = `translate3D(0, ${fixedTop}px, 0)`
     }
   },
   data () {
     return {
+      // 滚动的位置
       scrollY: -1,
-      currentIndex: 0
+      // 滚动列表的当前索引值
+      currentIndex: 0,
+      // 滚动区块的上限和滚动位置的滚动差
+      diff: -1
     }
   },
   created () {

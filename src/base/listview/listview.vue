@@ -28,6 +28,9 @@
         :class="{'current': currentIndex === index}">{{item}}</li>
      </ul>
    </div>
+   <div class="list-fixed">
+     <div class="fixed-title" v-show="fixedTitle">{{fixedTitle}}</div>
+   </div>
  </scroll>
 </template>
 
@@ -58,6 +61,12 @@ export default {
       return this.data.map(group => {
         return group.title.substr(0, 1)
       })
+    },
+    fixedTitle () {
+      if (this.scrollY > 0) {
+        return ''
+      }
+      return this.data[this.currentIndex] ? this.data[this.currentIndex].title : ''
     }
   },
   watch: {
@@ -195,4 +204,16 @@ export default {
       font-size: $font-size-small
       &.current
         color: $color-theme
+  .list-fixed
+    position absolute
+    top -1px
+    left 0
+    width 100%
+    .fixed-title
+      height 30px
+      line-height 30px
+      padding-left 20px
+      font-size $font-size-small
+      color $color-text-l
+      background $color-highlight-background
 </style>

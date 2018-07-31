@@ -6,6 +6,7 @@ import Vue from 'vue'
 import App from './App'
 // router的实例
 import router from './router'
+import store from './store'
 // 解决移动端点击的300ms的延迟
 import fastclick from 'fastclick'
 import VueLazyLoad from 'vue-lazyload'
@@ -24,6 +25,7 @@ fastclick.attach(document.body)
 new Vue({
   el: '#app',
   router,
+  store,
   components: { App },
   template: '<App/>'
 })

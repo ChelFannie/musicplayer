@@ -7,13 +7,15 @@
 </template>
 
 <script>
-import {mapGetters} from 'vuex'
-import {getSingerDetail} from '../../api/singer.js'
-import {ERR_OK} from '../../api/config.js'
+import {mapGetters, mapMutations} from 'vuex'
+import {getSingerDetail} from 'api/singer.js'
+import {ERR_OK} from 'api/config.js'
+import {createSong} from 'common/js/song.js'
 export default {
   data () {
     return {
-
+      songs: [],
+      singerParams: {}
     }
   },
   computed: {
@@ -22,22 +24,42 @@ export default {
     ])
   },
   created () {
-    console.log(this.singer)
+    if (Object.keys(this.singer).length) {
+      this.singerParams = this.singer
+      localStorage.setItem('singerId', JSON.stringify(this.singer))
+    } else {
+      this.singerParams = JSON.parse(localStorage.getItem('singerId'))
+      this.setSinger(this.singerParams)
+    }
     this._getDetail()
   },
   methods: {
+    ...mapMutations({
+      setSinger: 'SET_SINGER'
+    }),
     _getDetail () {
       // 如果在歌手的详情页刷新，获取不到this.singer.id
-      if (!this.singer.id) {
-        this.$router.push('/singer')
-        return
-      }
-      getSingerDetail(this.singer.id)
+      // if (!this.singer.id) {
+      //   this.$router.push('/singer')
+      //   return
+      // }
+      getSingerDetail(this.singerParams.id)
         .then(res => {
           if (res.code === ERR_OK) {
-            console.log(res.data)
+            this.songs = this._normalizeSongs(res.data.list)
+            console.log(this.songs)
           }
         })
+    },
+    _normalizeSongs (list) {
+      let ret = []
+      list.forEach(item => {
+        let {musicData} = item
+        if (musicData.songid && musicData.albummid) {
+          ret.push(createSong(musicData))
+        }
+      })
+      return ret
     }
   }
 }

@@ -21,15 +21,17 @@
         </ul>
       </li>
     </ul>
-    <div class="list-shortcut">
-      <ul>
+    <div
+      class="list-shortcut"
+      @touchstart="onShortcutTouchStart($event)"
+      @touchmove.stop.prevent="onShortcutTouchMove($event)">
+      <ul >
         <li
         class="item"
         v-for="(item, index) in shortcutList"
         :key="index"
-        @touchstart.stop.prevent="onShortcutTouchStart(index, $event)"
-        @touchmove.stop.prevent="onShortcutTouchMove($event)"
-        :class="{'current': currentIndex === index}">{{item}}</li>
+        :class="{'current': currentIndex === index}"
+        :data-index="index">{{item}}</li>
       </ul>
     </div>
     <div class="list-fixed">
@@ -44,7 +46,7 @@
 <script>
 import Scroll from 'base/scroll/scroll'
 import Loading from 'base/loading/loading'
-// import {getData} from 'common/js/dom.js'
+import {getData} from 'common/js/dom.js'
 // 标题栏的高度
 const TITLE_HEIGHT = 30
 // 导航每个元素的高度
@@ -137,12 +139,14 @@ export default {
     selectItem (item) {
       this.$emit('select', item)
     },
-    onShortcutTouchStart (index, e) {
+    onShortcutTouchStart (e) {
       // this.$refs.listview.scrollToElement(this.$refs.listGrop[index], 0)
-      this._scrollTo(index)
+      let anchorIndex = getData(e.target, 'index')
+      // this._scrollTo(index)
+      this._scrollTo(anchorIndex)
       let firstTouch = e.touches[0]
       this.touch.y1 = firstTouch.pageY
-      this.touch.anchorIndex = index
+      this.touch.anchorIndex = anchorIndex
     },
     onShortcutTouchMove (e) {
       let firstTouch = e.touches[0]
@@ -152,7 +156,7 @@ export default {
       // 计算偏移了几个字母值，并去零取整
       let delta = delta1 / ANCHOR_HEIGHT | 0
       // 得到移动后手离开屏幕的字母的index
-      let anchorIndex = this.touch.anchorIndex + delta
+      let anchorIndex = parseInt(this.touch.anchorIndex) + delta
       // this.$refs.listview.scrollToElement(this.$refs.listGrop[anchorIndex], 0)
       this._scrollTo(anchorIndex)
     },

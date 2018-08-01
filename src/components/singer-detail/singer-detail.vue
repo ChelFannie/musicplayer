@@ -8,6 +8,8 @@
 
 <script>
 import {mapGetters} from 'vuex'
+import {getSingerDetail} from '../../api/singer.js'
+import {ERR_OK} from '../../api/config.js'
 export default {
   data () {
     return {
@@ -21,9 +23,22 @@ export default {
   },
   created () {
     console.log(this.singer)
+    this._getDetail()
   },
   methods: {
-
+    _getDetail () {
+      // 如果在歌手的详情页刷新，获取不到this.singer.id
+      if (!this.singer.id) {
+        this.$router.push('/singer')
+        return
+      }
+      getSingerDetail(this.singer.id)
+        .then(res => {
+          if (res.code === ERR_OK) {
+            console.log(res.data)
+          }
+        })
+    }
   }
 }
 </script>

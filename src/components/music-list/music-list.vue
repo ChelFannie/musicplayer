@@ -1,17 +1,28 @@
 <template>
- <div class="music-list">
-   <div class="back">
-     <i class="icon-back"></i>
-   </div>
-   <h1 class="title" v-html="title"></h1>
-   <div class="bg-image" :style="bgStyle">
-     <div class="filter"></div>
-   </div>
- </div>
+  <div class="music-list">
+    <div class="back">
+      <i class="icon-back"></i>
+    </div>
+    <h1 class="title" v-html="title"></h1>
+    <div class="bg-image" :style="bgStyle" ref="bgImage">
+      <div class="filter"></div>
+    </div>
+    <scroll :data="songs" class="list" ref="list">
+      <div class="song-list-wrapper">
+        <song-list :songs="songs"></song-list>
+      </div>
+    </scroll>
+  </div>
 </template>
 
 <script>
+import Scroll from 'base/scroll/scroll'
+import SongList from 'base/song-list/song-list'
 export default {
+  components: {
+    Scroll,
+    SongList
+  },
   props: {
     bgImage: {
       type: String,
@@ -40,6 +51,11 @@ export default {
   },
   created () {
 
+  },
+  mounted () {
+    // console.log(this.$refs.list)
+    // this.$refs.list是一个VueComponent对象，对象中的$el才是对应的DOM
+    this.$refs.list.$el.style.top = `${this.$refs.bgImage.clientHeight}px`
   },
   methods: {
 
@@ -80,9 +96,27 @@ export default {
     font-size: $font-size-large
     color: $color-text
   .bg-image
+    width: 100%
+    height: 0
+    padding-top: 70%
+    transform-origin: top
+    background-size: cover
+    position: relative
+    .filter
+      position: absolute
+      top: 0
+      left: 0
       width: 100%
-      height: 0
-      padding-top: 70%
-      transform-origin: top
-      background-size: cover
+      height: 100%
+      background: rgba(7, 17, 27, 0.4)
+  .list
+    position: fixed
+    // top值不固定，会根据浏览器改变而改变
+    top: 0
+    bottom: 0
+    width: 100%
+    background: $color-background
+    overflow hidden
+    .song-list-wrapper
+      padding: 20px 30px
 </style>

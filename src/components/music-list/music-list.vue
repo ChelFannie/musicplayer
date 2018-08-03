@@ -57,11 +57,19 @@ export default {
   watch: {
     scrollY (newY) {
       // layer层不能无限滚动，滚动到（背景图片的高度-title的高度）后就不需要滚动了
-      this.translateY = Math.max(this.minTransalteY, newY)
-      // this.$refs.layer.style['transform'] = `translate3d(0, ${newY}px, 0)`
-      // this.$refs.layer.style['webkitTransform'] = `translate3d(0, ${newY}px, 0)`
-      this.$refs.layer.style['transform'] = `translate3d(0, ${this.translateY}px, 0)`
-      this.$refs.layer.style['webkitTransform'] = `translate3d(0, ${this.translateY}px, 0)`
+      let translateY = Math.max(this.minTransalteY, newY)
+      let zIndex = 0
+      this.$refs.layer.style['transform'] = `translate3d(0, ${translateY}px, 0)`
+      this.$refs.layer.style['webkitTransform'] = `translate3d(0, ${translateY}px, 0)`
+      if (newY < this.minTransalteY) {
+        zIndex = 10
+        this.$refs.bgImage.style.paddingTop = 0
+        this.$refs.bgImage.style.height = `${RESERVED_HEIGHT}px`
+      } else {
+        this.$refs.bgImage.style.paddingTop = '70%'
+        this.$refs.bgImage.style.height = 0
+      }
+      this.$refs.bgImage.style.zIndex = zIndex
     }
   },
   data () {
@@ -78,7 +86,6 @@ export default {
     // this.$refs.list是一个VueComponent对象，对象中的$el才是对应的DOM
     this.imageHeight = this.$refs.bgImage.clientHeight
     this.minTransalteY = -this.imageHeight + RESERVED_HEIGHT
-    // this.$refs.list.$el.style.top = `${this.$refs.bgImage.clientHeight}px`
     this.$refs.list.$el.style.top = `${this.imageHeight}px`
   },
   methods: {

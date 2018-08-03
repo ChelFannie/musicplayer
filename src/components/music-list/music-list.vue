@@ -7,7 +7,14 @@
     <div class="bg-image" :style="bgStyle" ref="bgImage">
       <div class="filter"></div>
     </div>
-    <scroll :data="songs" class="list" ref="list">
+    <div class="bg-layer" ref="layer"></div>
+    <scroll
+      :data="songs"
+      :probe-type="probeType"
+      :listen-scroll="listenScroll"
+      class="list"
+      ref="list"
+      @scroll="scroll">
       <div class="song-list-wrapper">
         <song-list :songs="songs"></song-list>
       </div>
@@ -44,13 +51,20 @@ export default {
       return `background-image:url(${this.bgImage})`
     }
   },
+  watch: {
+    scrollY (newY) {
+      this.$refs.layer.style['transform'] = `translate3d(0, ${newY}px, 0)`
+      this.$refs.layer.style['webkitTransform'] = `translate3d(0, ${newY}px, 0)`
+    }
+  },
   data () {
     return {
-
+      scrollY: 0
     }
   },
   created () {
-
+    this.probeType = 3
+    this.listenScroll = true
   },
   mounted () {
     // console.log(this.$refs.list)
@@ -58,7 +72,9 @@ export default {
     this.$refs.list.$el.style.top = `${this.$refs.bgImage.clientHeight}px`
   },
   methods: {
-
+    scroll (position) {
+      this.scrollY = position.y
+    }
   }
 }
 </script>
@@ -109,6 +125,10 @@ export default {
       width: 100%
       height: 100%
       background: rgba(7, 17, 27, 0.4)
+  .bg-layer
+    // position relative
+    height 100%
+    background $color-background
   .list
     position: fixed
     // top值不固定，会根据浏览器改变而改变
@@ -116,7 +136,7 @@ export default {
     bottom: 0
     width: 100%
     background: $color-background
-    overflow hidden
+    // overflow hidden
     .song-list-wrapper
       padding: 20px 30px
 </style>

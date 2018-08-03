@@ -5,7 +5,7 @@
     </div>
     <h1 class="title" v-html="title"></h1>
     <div class="bg-image" :style="bgStyle" ref="bgImage">
-      <div class="filter"></div>
+      <div class="filter" ref="filter"></div>
     </div>
     <div class="bg-layer" ref="layer"></div>
     <scroll
@@ -59,6 +59,19 @@ export default {
       // layer层不能无限滚动，滚动到（背景图片的高度-title的高度）后就不需要滚动了
       let translateY = Math.max(this.minTransalteY, newY)
       let zIndex = 0
+      // 定义图片缩放比例，且只有向下滚动才有
+      let scale = 1
+      // 定义图片的模糊效果，且只有向上滚动才有
+      let blur = 0
+      const percent = Math.abs(newY / this.imageHeight)
+      if (newY > 0) {
+        scale = 1 + percent
+        zIndex = 10
+      } else {
+        blur = Math.min(20, percent * 20)
+      }
+      this.$refs.bgImage.style.filter = `blur(${blur}px)`
+      // this.$refs.filter.style['backdrop'] = `blur(${blur}px)`
       this.$refs.layer.style['transform'] = `translate3d(0, ${translateY}px, 0)`
       this.$refs.layer.style['webkitTransform'] = `translate3d(0, ${translateY}px, 0)`
       if (newY < this.minTransalteY) {
@@ -70,6 +83,8 @@ export default {
         this.$refs.bgImage.style.height = 0
       }
       this.$refs.bgImage.style.zIndex = zIndex
+      this.$refs.bgImage.style['transform'] = `scale(${scale})`
+      this.$refs.bgImage.style['webkitTransform'] = `scale(${scale})`
     }
   },
   data () {

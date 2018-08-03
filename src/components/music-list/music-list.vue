@@ -25,6 +25,9 @@
 <script>
 import Scroll from 'base/scroll/scroll'
 import SongList from 'base/song-list/song-list'
+
+// 给layer滚动到title位置
+const RESERVED_HEIGHT = 40
 export default {
   components: {
     Scroll,
@@ -53,8 +56,12 @@ export default {
   },
   watch: {
     scrollY (newY) {
-      this.$refs.layer.style['transform'] = `translate3d(0, ${newY}px, 0)`
-      this.$refs.layer.style['webkitTransform'] = `translate3d(0, ${newY}px, 0)`
+      // layer层不能无限滚动，滚动到（背景图片的高度-title的高度）后就不需要滚动了
+      this.translateY = Math.max(this.minTransalteY, newY)
+      // this.$refs.layer.style['transform'] = `translate3d(0, ${newY}px, 0)`
+      // this.$refs.layer.style['webkitTransform'] = `translate3d(0, ${newY}px, 0)`
+      this.$refs.layer.style['transform'] = `translate3d(0, ${this.translateY}px, 0)`
+      this.$refs.layer.style['webkitTransform'] = `translate3d(0, ${this.translateY}px, 0)`
     }
   },
   data () {
@@ -69,7 +76,10 @@ export default {
   mounted () {
     // console.log(this.$refs.list)
     // this.$refs.list是一个VueComponent对象，对象中的$el才是对应的DOM
-    this.$refs.list.$el.style.top = `${this.$refs.bgImage.clientHeight}px`
+    this.imageHeight = this.$refs.bgImage.clientHeight
+    this.minTransalteY = -this.imageHeight + RESERVED_HEIGHT
+    // this.$refs.list.$el.style.top = `${this.$refs.bgImage.clientHeight}px`
+    this.$refs.list.$el.style.top = `${this.imageHeight}px`
   },
   methods: {
     scroll (position) {

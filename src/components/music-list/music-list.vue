@@ -25,9 +25,14 @@
 <script>
 import Scroll from 'base/scroll/scroll'
 import SongList from 'base/song-list/song-list'
+import {prefixStyle} from 'common/js/dom.js'
 
 // 给layer滚动到title位置
 const RESERVED_HEIGHT = 40
+// 拿到兼容后的样式
+const transform = prefixStyle('transform')
+const backdrop = prefixStyle('backdrop')
+// console.log(transform)
 export default {
   components: {
     Scroll,
@@ -70,9 +75,13 @@ export default {
       } else {
         blur = Math.min(20, percent * 10)
       }
-      this.$refs.filter.style.filter = `blur(${blur}px)`
-      this.$refs.layer.style['transform'] = `translate3d(0, ${translateY}px, 0)`
-      this.$refs.layer.style['webkitTransform'] = `translate3d(0, ${translateY}px, 0)`
+      // this.$refs.filter.style.filter = `blur(${blur}px)`
+      // this.$refs.filter.style['backdrop'] = `blur(${blur}px)`
+      this.$refs.filter.style[backdrop] = `blur(${blur}px)`
+      // this.$refs.layer.style['transform'] = `translate3d(0, ${translateY}px, 0)`
+      // 换成用变量代替
+      this.$refs.layer.style[transform] = `translate3d(0, ${translateY}px, 0)`
+      // this.$refs.layer.style['webkitTransform'] = `translate3d(0, ${translateY}px, 0)`
       if (newY < this.minTransalteY) {
         zIndex = 10
         this.$refs.bgImage.style.paddingTop = 0
@@ -82,8 +91,10 @@ export default {
         this.$refs.bgImage.style.height = 0
       }
       this.$refs.bgImage.style.zIndex = zIndex
-      this.$refs.bgImage.style['transform'] = `scale(${scale})`
-      this.$refs.bgImage.style['webkitTransform'] = `scale(${scale})`
+      // this.$refs.bgImage.style['transform'] = `scale(${scale})`
+      // 换成用变量代替
+      this.$refs.bgImage.style[transform] = `scale(${scale})`
+      // this.$refs.bgImage.style['webkitTransform'] = `scale(${scale})`
     }
   },
   data () {

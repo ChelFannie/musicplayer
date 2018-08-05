@@ -57,10 +57,7 @@ export default {
   watch: {
     scrollY (newY) {
       // layer层不能无限滚动，滚动到（背景图片的高度-title的高度）后就不需要滚动了
-      console.log(this.minTransalteY, 1)
-      console.log(newY, 2)
       let translateY = Math.max(this.minTransalteY, newY)
-      console.log(translateY, 3)
       let zIndex = 0
       // 定义图片缩放比例，且只有向下滚动才有
       let scale = 1

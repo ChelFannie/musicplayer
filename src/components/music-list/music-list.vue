@@ -1,6 +1,6 @@
 <template>
   <div class="music-list">
-    <div class="back">
+    <div class="back" @click="back">
       <i class="icon-back"></i>
     </div>
     <h1 class="title" v-html="title"></h1>
@@ -18,6 +18,9 @@
       <div class="song-list-wrapper">
         <song-list :songs="songs"></song-list>
       </div>
+      <div v-show="!songs.length" class="loading-container">
+        <loading></loading>
+      </div>
     </scroll>
   </div>
 </template>
@@ -25,6 +28,7 @@
 <script>
 import Scroll from 'base/scroll/scroll'
 import SongList from 'base/song-list/song-list'
+import Loading from 'base/loading/loading'
 import {prefixStyle} from 'common/js/dom.js'
 
 // 给layer滚动到title位置
@@ -36,7 +40,8 @@ const backdrop = prefixStyle('backdrop')
 export default {
   components: {
     Scroll,
-    SongList
+    SongList,
+    Loading
   },
   props: {
     bgImage: {
@@ -75,13 +80,9 @@ export default {
       } else {
         blur = Math.min(20, percent * 10)
       }
-      // this.$refs.filter.style.filter = `blur(${blur}px)`
-      // this.$refs.filter.style['backdrop'] = `blur(${blur}px)`
       this.$refs.filter.style[backdrop] = `blur(${blur}px)`
-      // this.$refs.layer.style['transform'] = `translate3d(0, ${translateY}px, 0)`
       // 换成用变量代替
       this.$refs.layer.style[transform] = `translate3d(0, ${translateY}px, 0)`
-      // this.$refs.layer.style['webkitTransform'] = `translate3d(0, ${translateY}px, 0)`
       if (newY < this.minTransalteY) {
         zIndex = 10
         this.$refs.bgImage.style.paddingTop = 0
@@ -91,10 +92,8 @@ export default {
         this.$refs.bgImage.style.height = 0
       }
       this.$refs.bgImage.style.zIndex = zIndex
-      // this.$refs.bgImage.style['transform'] = `scale(${scale})`
       // 换成用变量代替
       this.$refs.bgImage.style[transform] = `scale(${scale})`
-      // this.$refs.bgImage.style['webkitTransform'] = `scale(${scale})`
     }
   },
   data () {
@@ -116,6 +115,9 @@ export default {
   methods: {
     scroll (position) {
       this.scrollY = position.y
+    },
+    back () {
+      this.$router.back()
     }
   }
 }

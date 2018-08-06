@@ -190,6 +190,7 @@ export default {
         text-align center
         border 1px solid $color-theme
         color $color-theme
+        border-radius: 100px
         font-size 0
         .icon-play
           display inline-block

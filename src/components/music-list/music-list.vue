@@ -22,7 +22,7 @@
       ref="list"
       @scroll="scroll">
       <div class="song-list-wrapper">
-        <song-list :songs="songs"></song-list>
+        <song-list :songs="songs" @select="selectItem"></song-list>
       </div>
       <div v-show="!songs.length" class="loading-container">
         <loading></loading>
@@ -36,6 +36,7 @@ import Scroll from 'base/scroll/scroll'
 import SongList from 'base/song-list/song-list'
 import Loading from 'base/loading/loading'
 import {prefixStyle} from 'common/js/dom.js'
+import {mapActions} from 'vuex'
 
 // 给layer滚动到title位置
 const RESERVED_HEIGHT = 40
@@ -121,11 +122,21 @@ export default {
     this.$refs.list.$el.style.top = `${this.imageHeight}px`
   },
   methods: {
+    ...mapActions([
+      'selectPlay'
+    ]),
     scroll (position) {
       this.scrollY = position.y
     },
     back () {
       this.$router.back()
+    },
+    selectItem (item, index) {
+      // console.log(item, index)
+      this.selectPlay({
+        list: this.songs,
+        index: index
+      })
     }
   }
 }

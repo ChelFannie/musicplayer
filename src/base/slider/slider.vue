@@ -59,9 +59,9 @@ export default {
         return
       }
       // 如果视口改变，重新计算宽度
-      this._setSliderWidth()
+      this._setSliderWidth(true)
       // 刷新页面
-      this.slider.refresh(true)
+      this.slider.refresh()
     })
   },
   activated () {

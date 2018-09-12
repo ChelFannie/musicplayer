@@ -18,6 +18,7 @@ export function param (data) {
   let url = ''
   for (var k in data) {
     let value = data[k] !== undefined ? data[k] : ''
+    // encodeURIComponent() 函数可把字符串作为 URI 组件进行编码
     url += '&' + k + '=' + encodeURIComponent(value)
   }
   // url.substring(1) 删除第一个‘&’

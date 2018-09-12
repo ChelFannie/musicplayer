@@ -51,6 +51,7 @@ export default {
   data () {
     return {
       msg: 'recommend',
+      // 轮播图
       recommends: [],
       discList: [],
       checkLoaded: false
@@ -61,6 +62,7 @@ export default {
     this._getDiscList()
   },
   methods: {
+    // 获取轮播图信息
     _getRecommend () {
       getRecommend().then(res => {
         if (res.code === ERR_OK) {

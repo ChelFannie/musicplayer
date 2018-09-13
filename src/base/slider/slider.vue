@@ -130,7 +130,9 @@ export default {
         pageIndex = 0
       }
       this.timer = setTimeout(() => {
-        this.slider.goToPage(pageIndex, 0, 400)
+        // this.slider.goToPage(pageIndex, 0, 400) 老版本
+        // 解决因为BScoll版本升级不能无缝滚动的bug
+        this.slider.next()
       }, this.interval)
     }
   }

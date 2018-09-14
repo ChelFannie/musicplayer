@@ -2,6 +2,7 @@
  <div class="recommend">
    <scroll ref="scroll" class="recommend-content" :data="discList">
      <div>
+       <!-- 加上v-if的判断是为了保证，在列表元素不为空的情况下，初始化slider组件，保证轮播图的正常滚动 -->
       <div class="slider-wrapper" v-if="recommends.length">
         <slider>
           <div v-for="(item, index) in recommends" :key="index">
@@ -51,7 +52,7 @@ export default {
   data () {
     return {
       msg: 'recommend',
-      // 轮播图
+      // 轮播图列表
       recommends: [],
       discList: [],
       checkLoaded: false

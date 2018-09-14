@@ -1,4 +1,10 @@
+/**
+ * 判断是否需要给元素添加className
+ * @param {*} el - 操作的元素
+ * @param {*} className - 元素的类
+ */
 export function addClass (el, className) {
+  // 如果有当前类，则不添加，没有就添加
   if (hassClass(el, className)) {
     return
   }
@@ -7,6 +13,11 @@ export function addClass (el, className) {
   el.className = newClass.join(' ')
 }
 
+/**
+ * 判断元素是否含有某个className
+ * @param {*} el - 操作的元素
+ * @param {*} className - 元素的类
+ */
 export function hassClass (el, className) {
   let reg = new RegExp('(^|\\s)' + className + '(\\s|$)')
   return reg.test(el.className)

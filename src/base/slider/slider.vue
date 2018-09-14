@@ -224,6 +224,7 @@ export default {
       this.slider.next()
     }
   },
+  // keep-alive 组件激活时调用
   activated () {
     // if (this.autoPlay) {
     //   this._play()
@@ -233,13 +234,14 @@ export default {
     }
     // 启用 better-scroll, 默认 开启
     this.slider.enable()
-    let pageIndex = this.slide.getCurrentPage().pageX
+    let pageIndex = this.slider.getCurrentPage().pageX
     this.slider.goToPage(pageIndex, 0, 0)
     this.currentPageIndex = pageIndex
     if (this.autoPlay) {
       this._play()
     }
   },
+  // keep-alive 组件停用时调用
   deactivated () {
     // 禁用 better-scroll
     this.slider.disable()

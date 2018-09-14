@@ -2,6 +2,7 @@
   <div id="app">
     <m-header></m-header>
     <tab></tab>
+    <!--keep-alive可以将DOM缓存，在页面切换过程中，不会重复发送请求  -->
     <keep-alive>
       <router-view></router-view>
     </keep-alive>

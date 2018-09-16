@@ -1,6 +1,8 @@
 <template>
  <div class="recommend">
+   <!-- 要等到歌单数据已经返回了，才能初始化滚动插件 -->
    <scroll ref="scroll" class="recommend-content" :data="discList">
+     <!-- 使用BScroll实现滚动，都是对组件的第一个元素有效 -->
      <div>
        <!-- 加上v-if的判断是为了保证，在列表元素不为空的情况下，初始化slider组件，保证轮播图的正常滚动 -->
       <div class="slider-wrapper" v-if="recommends.length">
@@ -29,6 +31,7 @@
         </ul>
       </div>
      </div>
+
      <div class="loading-container" v-show="!discList.length">
        <loading></loading>
      </div>
@@ -71,6 +74,7 @@ export default {
         }
       })
     },
+    // 获取歌单列表
     _getDiscList () {
       getDiscList().then(res => {
         if (res.code === ERR_OK) {
@@ -81,6 +85,7 @@ export default {
     // 解决图片加载缓慢，滚动不能执行的问题
     // 因为轮播图的高度是由图片的高度撑开，所以只要有一张图片加载完全，就重新计算滚动高度
     loadImage () {
+      // 只要有一张图片加载完成，就重新计算，其他图片再加载回来，就不用再计算
       if (!this.checkLoaded) {
         this.$refs.scroll.refresh()
         this.checkLoaded = true

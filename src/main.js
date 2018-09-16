@@ -15,6 +15,7 @@ import 'common/stylus/index.styl'
 
 Vue.use(VueLazyLoad, {
   // loading: './common/image/default.png'
+  // 传默认图片
   loading: require('common/image/default.png')
 })
 

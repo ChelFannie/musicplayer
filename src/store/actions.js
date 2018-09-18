@@ -1,3 +1,4 @@
+// 用于对mutations操作或者异步操作
 import * as types from './mutation-types'
 export const selectPlay = function ({commit, state}, {list, index}) {
   commit(types.SET_PLAYLIST, list)

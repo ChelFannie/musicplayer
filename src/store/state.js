@@ -1,3 +1,4 @@
+// 存储所有的状态
 import {playMode} from '../common/js/config'
 
 const state = {

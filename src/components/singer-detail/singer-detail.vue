@@ -17,6 +17,7 @@ export default {
   },
   data () {
     return {
+      // 歌单列表
       songs: [],
       singerParams: {}
     }
@@ -46,6 +47,7 @@ export default {
     ...mapMutations({
       setSinger: 'SET_SINGER'
     }),
+    // 获取对应歌手歌单列表
     _getDetail () {
       // 如果在歌手的详情页刷新，获取不到this.singer.id
       // if (!this.singer.id) {
@@ -56,7 +58,7 @@ export default {
         .then(res => {
           if (res.code === ERR_OK) {
             this.songs = this._normalizeSongs(res.data.list)
-            // console.log(this.songs)
+            console.log(this.songs)
           }
         })
     },

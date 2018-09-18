@@ -76,6 +76,7 @@ export default {
     },
     // 固定的标题栏
     fixedTitle () {
+      // 最初时，data的数据为空，所以scrollY可能为0
       if (this.scrollY > 0) {
         return ''
       }
@@ -120,6 +121,10 @@ export default {
     // 滚动区块的上限和滚动位置的滚动差
     diff (newVal) {
       let fixedTop = (newVal > 0 && newVal < TITLE_HEIGHT) ? newVal - TITLE_HEIGHT : 0
+      if (this.fixedTop === fixedTop) {
+        return
+      }
+      this.fixedTop = fixedTop
       this.$refs.fixedTitle.style.transform = `translate3D(0, ${fixedTop}px, 0)`
     }
   },
@@ -143,6 +148,7 @@ export default {
     this.probeType = 3
   },
   methods: {
+    // 向父组件派发事件
     selectItem (item) {
       this.$emit('select', item)
     },

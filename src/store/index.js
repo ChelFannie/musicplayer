@@ -1,3 +1,4 @@
+// store的入口文件
 import Vue from 'vue'
 import Vuex from 'vuex'
 // 注意引入的方式不一样

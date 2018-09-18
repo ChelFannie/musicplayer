@@ -1,4 +1,4 @@
-// getters的作用：作为state的代理
+// getters的作用：作为state的代理 也就是对state做一些映射
 export const singer = state => state.singer
 
 export const playing = state => state.playing

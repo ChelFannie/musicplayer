@@ -1,11 +1,11 @@
 <template>
   <scroll
-  class="listview"
-  :data="data"
-  :listen-scroll="listenScroll"
-  :probe-type="probeType"
-  ref="listview"
-  @scroll="scroll">
+    class="listview"
+    :data="data"
+    :listen-scroll="listenScroll"
+    :probe-type="probeType"
+    ref="listview"
+    @scroll="scroll">
     <ul>
       <li v-for="(group, index) in data" :key="index" class="list-group" ref="listGrop">
         <h2 class="list-group-title">{{group.title}}</h2>
@@ -15,6 +15,7 @@
             v-for="(item, index1) in group.items"
             :key="index1"
             @click="selectItem(item)">
+            <!-- 使用图片懒加载技术 -->
             <img class="avatar" v-lazy="item.avatar" alt="">
             <span class="name">{{item.name}}</span>
           </li>
@@ -49,7 +50,7 @@ import Loading from 'base/loading/loading'
 import {getData} from 'common/js/dom.js'
 // 标题栏的高度
 const TITLE_HEIGHT = 30
-// 导航每个元素的高度
+// 右侧导航每个元素的高度
 const ANCHOR_HEIGHT = 18
 export default {
   components: {
@@ -73,6 +74,7 @@ export default {
         return group.title.substr(0, 1)
       })
     },
+    // 固定的标题栏
     fixedTitle () {
       if (this.scrollY > 0) {
         return ''
@@ -89,8 +91,10 @@ export default {
       //   this._calculateHeight()
       // }, 20)
     },
+    // 实时监听滚动的Y轴的距离
     scrollY (newY) {
-      // console.log(newY)
+      // newY是个负数  listHeight数组中的数都是正数
+      // console.log(newY, 'newY')
       const listHeight = this.listHeight
       // console.log(this.listHeight)
       // 当滚动到顶部，newY>0
@@ -111,8 +115,9 @@ export default {
         }
       }
       // 当滚动到底部，且-newY大于最后一个元素的上限
-      // this.currentIndex = listHeight.length - 2
+      this.currentIndex = listHeight.length - 2
     },
+    // 滚动区块的上限和滚动位置的滚动差
     diff (newVal) {
       let fixedTop = (newVal > 0 && newVal < TITLE_HEIGHT) ? newVal - TITLE_HEIGHT : 0
       this.$refs.fixedTitle.style.transform = `translate3D(0, ${fixedTop}px, 0)`
@@ -129,6 +134,8 @@ export default {
     }
   },
   created () {
+    // 在data或者props定义的数据，vue会自动添加set和get属性，用于观察数据的变化，而这里不需要
+    // 创建toch对象，记录起始位置和终点位置
     this.touch = {}
     this.listenScroll = true
     this.listHeight = []
@@ -139,15 +146,19 @@ export default {
     selectItem (item) {
       this.$emit('select', item)
     },
+    // vue移动端的touchstart事件
     onShortcutTouchStart (e) {
       // this.$refs.listview.scrollToElement(this.$refs.listGrop[index], 0)
+      // 获取元素的自定义属性的值
       let anchorIndex = getData(e.target, 'index')
       // this._scrollTo(index)
       this._scrollTo(anchorIndex)
       let firstTouch = e.touches[0]
       this.touch.y1 = firstTouch.pageY
+      // 记录下滑动开始的anchorIndex
       this.touch.anchorIndex = anchorIndex
     },
+    // vue移动端的touchmovu事件
     onShortcutTouchMove (e) {
       let firstTouch = e.touches[0]
       this.touch.y2 = firstTouch.pageY
@@ -160,22 +171,37 @@ export default {
       // this.$refs.listview.scrollToElement(this.$refs.listGrop[anchorIndex], 0)
       this._scrollTo(anchorIndex)
     },
+    // 监听scroll组件，scroll组件会派发事件，得到对应滚动的位置
     scroll (position) {
       // console.log(position)
       this.scrollY = position.y
     },
+    // 调用BScroll中的scrollToElement 第二个参数的函数是是否需要滚动动画，这里不需要
     _scrollTo (index) {
+      // index如果null或者拖动到顶部或者顶部时，处理index的边界问题
+      if (!index && index !== 0) {
+        return
+      }
+      if (index <= 0) {
+        index = 0
+      } else if (index > this.listHeight.length - 2) {
+        index = this.listHeight.length - 2
+      }
       // 点击右侧导航，得到scrollY，再检测scrollY就可以让左侧列表到达相应位置
-      this.scrollY = -this.listHeight[index]
       this.$refs.listview.scrollToElement(this.$refs.listGrop[index], 0)
+      // 当滚动列表时，只会派发scrollToElement事件，不会触发右侧的导航条的变化，而右侧导航条是根据scrollY变化的，所以列表滚动时，需要设置scrollY
+      this.scrollY = -this.listHeight[index]
     },
+    // 计算每个listGrop高度
     _calculateHeight () {
+      // 每个分类列表的高度的数组 都为正数
       this.listHeight = []
       const list = this.$refs.listGrop
       let height = 0
       this.listHeight.push(height)
       for (let i = 0; i < list.length; i++) {
         let item = list[i]
+        // 得到每个listGrop距离顶部的距离
         height += item.clientHeight
         this.listHeight.push(height)
       }

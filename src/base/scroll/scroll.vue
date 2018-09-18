@@ -22,6 +22,7 @@ export default {
       type: Array,
       default: null
     },
+    // 用来告诉scroll组件是否需要监听scroll的scroll事件
     listenScroll: {
       type: Boolean,
       default: false

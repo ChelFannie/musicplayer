@@ -23,8 +23,15 @@ export function hassClass (el, className) {
   return reg.test(el.className)
 }
 
+/**
+ * 获取或者设置元素的自定义属性
+ * @param {*} el - 元素
+ * @param {*} name  - 自定义属性名称
+ * @param {*} val  - 设置的值
+ */
 export function getData (el, name, val) {
   const prefix = 'data-'
+  // 如果有传入设置的值，则设置元素的自定义属性的值，如果没有，就是获取元素自定义属性的值
   if (val) {
     return el.setAttribute(prefix + name, val)
   } else {

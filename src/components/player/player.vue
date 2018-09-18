@@ -2,20 +2,20 @@
   <div class="player" v-show="playlist.length>0">
     <div class="normal-player" v-show="fullScreen">
       <div class="background">
-        <img width="100%" height="100%" src="" alt="">
+        <img width="100%" height="100%" :src="currentSong.image" alt="">
       </div>
       <div class="top">
-        <div class="back">
+        <div class="back" @click="back">
           <i class="icon-back"></i>
         </div>
-        <h1 class="title"></h1>
-        <h2 class="subtitle"></h2>
+        <h1 class="title" v-html="currentSong.name"></h1>
+        <h2 class="subtitle" v-html="currentSong.singer"></h2>
       </div>
       <div class="middle">
         <div class="middle-l">
           <div class="cd-wrapper">
             <div class="cd">
-              <img src="" alt="" class="image">
+              <img :src="currentSong.image" alt="" class="image">
             </div>
           </div>
         </div>
@@ -40,13 +40,13 @@
         </div>
       </div>
     </div>
-    <div class="mini-player" v-show="!fullScreen">
+    <div class="mini-player" v-show="!fullScreen" @click="open">
       <div class="icon">
-        <img width="40" height="40" src="" alt="">
+        <img width="40" height="40" :src="currentSong.image" alt="">
       </div>
       <div class="text">
-        <h2 class="name"></h2>
-        <p class="desc"></p>
+        <h2 class="name" v-html="currentSong.name"></h2>
+        <p class="desc" v-html="currentSong.singer"></p>
       </div>
       <div class="control"></div>
       <div class="control">
@@ -57,7 +57,7 @@
 </template>
 
 <script>
-import {mapGetters} from 'vuex'
+import {mapGetters, mapMutations} from 'vuex'
 export default {
   data () {
     return {
@@ -67,13 +67,24 @@ export default {
   computed: {
     ...mapGetters([
       'fullScreen',
-      'playlist'
+      'playlist',
+      'currentSong'
     ])
   },
   created () {
   },
   methods: {
-
+    ...mapMutations({
+      setFullScreen: 'SET_FULL_SCREEN'
+    }),
+    // 将播放器变小
+    back () {
+      this.setFullScreen(false)
+    },
+    // 将播放器全屏展示
+    open () {
+      this.setFullScreen(true)
+    }
   }
 }
 </script>
@@ -113,6 +124,19 @@ export default {
           font-size $font-size-large-x
           color $color-theme
           transform rotate(-90deg)
+      .title
+        width 70%
+        margin 0 auto
+        line-height 40px
+        text-align center
+        no-wrap()
+        font-size $font-size-large
+        color $color-text
+      .subtitle
+        line-height 20px
+        text-align center
+        font-size $font-size-medium
+        color $color-text
     .middle
       position fixed
       width 100%
@@ -131,12 +155,13 @@ export default {
           left 10%
           top 0
           width 80%
-          height 100%
+          height 80%
           .cd
             width 100%
             height 100%
             box-sizing border-box
             border 10px solid rgba(255, 255, 255, 0.1)
+            border-radius 50%
             .image
               position absolute
               left 0
@@ -171,4 +196,35 @@ export default {
     width 100%
     height 60px
     background $color-highlight-background
+    display flex
+    align-items center
+    .icon
+      flex 0 0 40px
+      width 40px
+      padding 0 10px 0 20px
+      img
+        border-radius 50%
+    .text
+      flex 1
+      display flex
+      flex-direction column
+      justify-content center
+      line-height 20px
+      overflow hidden
+      .name
+        margin-bottom 2px
+        no-wrap()
+        font-size $font-size-medium
+        color $color-text
+      .desc
+        no-wrap()
+        font-size $font-size-small
+        color $color-text-d
+    .control
+      flex 0 0 30px
+      width 30px
+      padding 0 10px
+      .icon-playlist
+        font-size 30px
+        color $color-theme-d
 </style>

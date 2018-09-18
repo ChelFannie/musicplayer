@@ -33,22 +33,3 @@ export function getSingerDetail (singerId) {
   })
   return jsonp(url, data, options)
 }
-
-// export function getSingerVKey (songmid) {
-//   const url = 'https://c.y.qq.com/base/fcgi-bin/fcg_music_express_mobile3.fcg'
-
-//   const data = Object.assign({}, commonParams, {
-//     hostUin: 0,
-//     format: 'json',
-//     needNewCode: 0,
-//     platform: 'yqq',
-//     cid: '205361747',
-//     uin: '11297258',
-//     songmid: songmid,
-//     filename: `C100${songmid}.m4a`,
-//     g_tk: 872989112,
-//     jsonpCallback: 'MusicJsonCallback06459212607938936'
-
-//   })
-//   return jsonp(url, data, options)
-// }

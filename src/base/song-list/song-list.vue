@@ -34,6 +34,7 @@ export default {
 
   },
   methods: {
+    // 得到歌曲详情信息
     getDesc (song) {
       return `${song.singer}·${song.album}`
     },

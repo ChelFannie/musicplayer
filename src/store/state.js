@@ -3,7 +3,9 @@ import {playMode} from '../common/js/config'
 
 const state = {
   singer: {},
+  // 播放状态
   playing: false,
+  // 全屏播放
   fullScreen: false,
   // 播放列表(可无序)
   playlist: [],

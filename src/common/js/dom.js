@@ -40,7 +40,8 @@ export function getData (el, name, val) {
 }
 
 /**
- * 处理兼容
+ * 处理css兼容
+ * 要先进行能力检测（创建一个元素，检测支持哪个样式类型）
  */
 let elementStyle = document.createElement('div').style
 

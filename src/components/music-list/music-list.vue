@@ -88,7 +88,7 @@ export default {
         blur = Math.min(20, percent * 10)
       }
       this.$refs.filter.style[backdrop] = `blur(${blur}px)`
-      // 换成用变量代替
+      // 换成用变量代替 处理兼容
       this.$refs.layer.style[transform] = `translate3d(0, ${translateY}px, 0)`
       if (newY < this.minTransalteY) {
         zIndex = 10
@@ -96,21 +96,27 @@ export default {
         this.$refs.bgImage.style.height = `${RESERVED_HEIGHT}px`
         this.$refs.playBtn.style.display = 'none'
       } else {
+        // 如果没有滚动到最小的距离差，则是默认样式
         this.$refs.bgImage.style.paddingTop = '70%'
         this.$refs.bgImage.style.height = 0
         this.$refs.playBtn.style.display = ''
       }
       this.$refs.bgImage.style.zIndex = zIndex
-      // 换成用变量代替
+      // 换成用变量代替 处理兼容
       this.$refs.bgImage.style[transform] = `scale(${scale})`
     }
   },
   data () {
     return {
-      scrollY: 0
+      scrollY: 0,
+      // 背景图片的高度
+      imageHeight: null,
+      // 可以滚动的距离
+      minTransalteY: null
     }
   },
   created () {
+    // 实时派发scroll事件
     this.probeType = 3
     this.listenScroll = true
   },
@@ -118,6 +124,7 @@ export default {
     // console.log(this.$refs.list)
     // this.$refs.list是一个VueComponent对象，对象中的$el才是对应的DOM
     this.imageHeight = this.$refs.bgImage.clientHeight
+    // layer可以滚动的距离
     this.minTransalteY = -this.imageHeight + RESERVED_HEIGHT
     this.$refs.list.$el.style.top = `${this.imageHeight}px`
   },

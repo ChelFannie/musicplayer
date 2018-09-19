@@ -6,10 +6,16 @@
       @after-enter="afterEnter"
       @leave="leave"
       @after-leave="afterLeave">
+
+      <!-- 大播放器 -->
       <div class="normal-player" v-show="fullScreen">
+
+        <!-- 背景图 -->
         <div class="background">
           <img width="100%" height="100%" :src="currentSong.image" alt="">
         </div>
+
+        <!-- 顶部歌曲信息 -->
         <div class="top">
           <div class="back" @click="back">
             <i class="icon-back"></i>
@@ -17,6 +23,8 @@
           <h1 class="title" v-html="currentSong.name"></h1>
           <h2 class="subtitle" v-html="currentSong.singer"></h2>
         </div>
+
+        <!-- 唱片 -->
         <div class="middle">
           <div class="middle-l">
             <div class="cd-wrapper" ref="cdWrapper">
@@ -26,7 +34,18 @@
             </div>
           </div>
         </div>
+
+        <!-- 底部操作歌曲 -->
         <div class="bottom">
+
+          <!-- 歌曲进度条 -->
+          <div class="progress-wrapper">
+            <span class="time time-l">{{format(currentTime)}}</span>
+            <div class="progress-bar-wrapper"></div>
+            <span class="time time-r">{{format(currentSong.duration)}}</span>
+          </div>
+
+          <!-- 歌曲前进后退收藏功能 -->
           <div class="operators">
             <div class="icon i-left">
               <i class="icon-sequence"></i>
@@ -48,7 +67,10 @@
         </div>
       </div>
     </transition>
+
     <transition name="mini">
+
+      <!-- 小播放器 -->
       <div class="mini-player" v-show="!fullScreen" @click="open">
         <div class="icon">
           <img :class="cdCls" width="40" height="40" :src="currentSong.image" alt="">
@@ -70,7 +92,8 @@
       ref="audio"
       :src="currentSong.url"
       @play="ready"
-      @error="error"></audio>
+      @error="error"
+      @timeupdate="updateTime"></audio>
   </div>
 </template>
 
@@ -83,7 +106,9 @@ export default {
   data () {
     return {
       // 歌曲是否播放
-      songReady: false
+      songReady: false,
+      // 当前播放时间
+      currentTime: 0
     }
   },
   computed: {
@@ -234,6 +259,10 @@ export default {
     error () {
       this.songReady = true
     },
+    // timeupdate 事件在音频/视频（audio/video）的播放位置发生改变时触发
+    updateTime (e) {
+      this.currentTime = e.target.currentTime
+    },
     _getPosAndScale () {
       // 小播放器mini-player的宽度
       const targetWidth = 40
@@ -251,6 +280,24 @@ export default {
       const x = -(window.innerWidth / 2 - paddingLeft)
       const y = window.innerHeight - paddingTop - paddingBottom - width / 2
       return {x, y, scale}
+    },
+    // 格式化时间
+    format (interval) {
+      // 向下取整
+      interval = interval | 0
+      const minute = interval / 60 | 0
+      // const second = interval % 60
+      const second = this._pad(interval % 60)
+      return `${minute}:${second}`
+    },
+    // 补零 n 表示补零的位数
+    _pad (num, n = 2) {
+      let len = num.toString().length
+      while (len < n) {
+        num = '0' + num
+        len++
+      }
+      return num
     }
   }
 }

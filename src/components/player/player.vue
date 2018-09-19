@@ -42,7 +42,7 @@
           <div class="progress-wrapper">
             <span class="time time-l">{{format(currentTime)}}</span>
             <div class="progress-bar-wrapper">
-              <progress-bar :percent="percent"></progress-bar>
+              <progress-bar :percent="percent" @percentChange="onProgressBarChange"></progress-bar>
             </div>
             <span class="time time-r">{{format(currentSong.duration)}}</span>
           </div>
@@ -272,6 +272,14 @@ export default {
     // timeupdate 事件在音频/视频（audio/video）的播放位置发生改变时触发
     updateTime (e) {
       this.currentTime = e.target.currentTime
+    },
+    // 子组件传回的比例
+    onProgressBarChange (percent) {
+      this.$refs.audio.currentTime = this.currentSong.duration * percent
+      if (!this.playing) {
+        this.togglePlaying()
+      }
+      // 7-14
     },
     _getPosAndScale () {
       // 小播放器mini-player的宽度

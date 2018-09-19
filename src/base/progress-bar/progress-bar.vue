@@ -2,7 +2,12 @@
   <div class="progress-bar" ref="progressBar">
     <div class="bar-inner">
       <div class="progress" ref="progress"></div>
-      <div class="progress-btn-wrapper" ref="progressBtn">
+      <div
+        class="progress-btn-wrapper"
+        ref="progressBtn"
+        @touchstart.prevent="progressTouchStart"
+        @touchmove.prevent="progressTouchMove"
+        @touchend="progressTouchEnd">
         <div class="progress-btn"></div>
       </div>
     </div>
@@ -16,6 +21,7 @@ const transform = prefixStyle('transform')
 const progressBtnWidth = 16
 export default {
   props: {
+    // 歌曲播放进度比例
     percent: {
       type: Number,
       default: 0
@@ -23,12 +29,15 @@ export default {
   },
   data () {
     return {
-
+      // 进度条按钮被拖动的值
+      touch: {}
     }
   },
   watch: {
+    // 监控父组件在传入percent时，改动进度条和按钮的位移
     percent (newPercent) {
-      if (newPercent >= 0) {
+      // 如果在进度条被拖动过程中，即是this.touch.initiated = true，进度条此时不跟随父组件改变
+      if (newPercent >= 0 && !this.touch.initiated) {
         // 进度条可移动的最大长度
         const barWidth = this.$refs.progressBar.clientWidth - progressBtnWidth
         // 进度条移动的实时宽度
@@ -39,14 +48,46 @@ export default {
     }
   },
   created () {
-
   },
   methods: {
+    progressTouchStart (e) {
+      // 被拖动的起始位置
+      this.touch.startX = e.touches[0].clientX
+      // 设置被拖动的标志
+      this.touch.initiated = true
+      // 记录进度条的当前位置
+      this.touch.left = this.$refs.progress.clientWidth
+    },
+    progressTouchMove (e) {
+      if (!this.touch.initiated) {
+        return
+      }
+      // 进度条被拖动的位移差
+      const deltaX = e.touches[0].clientX - this.touch.startX
+      // 进度条上的按钮拖动需要限制 最小是0，最大是progressBar的宽度 - progressBtnWidth
+      const move = Math.max(0, (this.touch.left + deltaX))
+      const offsetWidth = Math.min((this.$refs.progressBar.clientWidth - progressBtnWidth), move)
+      // this._offset(deltaX)
+      this._offset(offsetWidth)
+    },
+    progressTouchEnd () {
+      // 拖动结束时，改变拖动的标志位，并将比例传回给父组件
+      this.touch.initiated = false
+      this._triggerPercent()
+    },
     // 进度条和移动按钮移动的距离
     _offset (offsetWidth) {
       this.$refs.progress.style.width = `${offsetWidth}px`
       // this.$refs.progressBtn.style.transform = `translate3d(${offsetWidth}px, 0, 0)`
       this.$refs.progressBtn.style[transform] = `translate3d(${offsetWidth}px, 0, 0)`
+    },
+    // 进度条拖动后，传回比例给父组件
+    _triggerPercent () {
+      // 进度条可移动的最大长度
+      const barWidth = this.$refs.progressBar.clientWidth - progressBtnWidth
+      // 进度条移动的实时宽度
+      const percent = this.$refs.progress.clientWidth / barWidth
+      this.$emit('percentChange', percent)
     }
   }
 }

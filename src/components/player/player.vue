@@ -41,7 +41,9 @@
           <!-- 歌曲进度条 -->
           <div class="progress-wrapper">
             <span class="time time-l">{{format(currentTime)}}</span>
-            <div class="progress-bar-wrapper"></div>
+            <div class="progress-bar-wrapper">
+              <progress-bar></progress-bar>
+            </div>
             <span class="time time-r">{{format(currentSong.duration)}}</span>
           </div>
 
@@ -101,8 +103,12 @@
 import {mapGetters, mapMutations} from 'vuex'
 import animations from 'create-keyframe-animation'
 import {prefixStyle} from 'common/js/dom.js'
+import progressBar from 'base/progress-bar/progress-bar'
 const transform = prefixStyle('transform')
 export default {
+  components: {
+    progressBar
+  },
   data () {
     return {
       // 歌曲是否播放
@@ -401,6 +407,24 @@ export default {
       position absolute
       bottom 50px
       width 100%
+      .progress-wrapper
+        display flex
+        align-items center
+        width 80%
+        margin 0 auto
+        padding 10px 0
+        .time
+          color $color-text
+          font-size $font-size-small
+          flex 0 0 30px
+          width 30px
+          line-height 30px
+          &.time-l
+            text-align left
+          &.time-r
+            text-align right
+        .progress-bar-wrapper
+          flex 1
       .operators
         display flex
         align-items center

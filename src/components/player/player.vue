@@ -31,15 +31,15 @@
             <div class="icon i-left">
               <i class="icon-sequence"></i>
             </div>
-            <div class="icon i-left">
-              <i class="icon-prev"></i>
+            <div class="icon i-left" :class="disableCls">
+              <i class="icon-prev" @click="prev"></i>
             </div>
-            <div class="icon i-center" >
+            <div class="icon i-center" :class="disableCls">
               <!-- <i class="icon-play" @click="togglePlaying"></i> -->
               <i :class="playIcon" @click="togglePlaying"></i>
             </div>
-            <div class="icon i-right">
-              <i class="icon-next"></i>
+            <div class="icon i-right" :class="disableCls">
+              <i class="icon-next" @click="next"></i>
             </div>
             <div class="icon i-right">
               <i class="icon icon-not-favorite"></i>
@@ -66,7 +66,11 @@
         </div>
       </div>
     </transition>
-    <audio ref="audio" :src="currentSong.url"></audio>
+    <audio
+      ref="audio"
+      :src="currentSong.url"
+      @play="ready"
+      @error="error"></audio>
   </div>
 </template>
 
@@ -78,7 +82,8 @@ const transform = prefixStyle('transform')
 export default {
   data () {
     return {
-
+      // 歌曲是否播放
+      songReady: false
     }
   },
   computed: {
@@ -86,7 +91,8 @@ export default {
       'fullScreen',
       'playlist',
       'currentSong',
-      'playing'
+      'playing',
+      'currentIndex'
     ]),
     // 控制大播放器的播放与暂停按钮显示
     playIcon () {
@@ -96,8 +102,12 @@ export default {
     miniIcon () {
       return this.playing ? 'icon-pause-mini' : 'icon-play-mini'
     },
+    // 控制小播放器cd的旋转样式
     cdCls () {
       return this.playing ? 'play' : 'play pause'
+    },
+    disableCls () {
+      return this.songReady ? '' : 'disable'
     }
   },
   watch: {
@@ -121,7 +131,8 @@ export default {
   methods: {
     ...mapMutations({
       setFullScreen: 'SET_FULL_SCREEN',
-      setPlayingState: 'SET_PLAYING_STATE'
+      setPlayingState: 'SET_PLAYING_STATE',
+      setCurrentIndex: 'SET_CURRENT_INDEX'
     }),
     // 将播放器变小
     back () {
@@ -177,7 +188,51 @@ export default {
     },
     // 控制播放器的播放暂停状态
     togglePlaying () {
+      // 如果歌曲不是在播放状态时，不能马上点击
+      if (!this.songReady) {
+        return
+      }
       this.setPlayingState(!this.playing)
+    },
+    // 播放上一曲
+    prev () {
+      // 如果歌曲不是在播放状态时，不能马上点击,如果不判断，连续点击会报错
+      if (!this.songReady) {
+        return
+      }
+      let index = this.currentIndex - 1
+      if (index === -1) {
+        index = this.playlist.length - 1
+      }
+      this.setCurrentIndex(index)
+      // 如果当前状态是暂停，播放上一曲时，音乐播放，同时要改变播放与暂停按钮的样式的显示与隐藏
+      if (!this.playing) {
+        this.togglePlaying()
+      }
+      this.songReady = false
+    },
+    // 播放下一曲
+    next () {
+      // 如果歌曲不是在播放状态时，不能马上点击
+      if (!this.songReady) {
+        return
+      }
+      let index = this.currentIndex + 1
+      if (index === this.playlist.length) {
+        index = 0
+      }
+      this.setCurrentIndex(index)
+      if (!this.playing) {
+        this.togglePlaying()
+      }
+      this.songReady = false
+    },
+    // 当浏览器能够开始播放指定的音频/视频时，发生 canplay 事件
+    ready () {
+      this.songReady = true
+    },
+    error () {
+      this.songReady = true
     },
     _getPosAndScale () {
       // 小播放器mini-player的宽度
@@ -305,8 +360,10 @@ export default {
         .icon
           flex 1
           color $color-theme-d
-        i
-          font-size 30px
+          &.disable
+            color: $color-theme-d
+          i
+            font-size 30px
         .i-left
           text-align right
         .i-center

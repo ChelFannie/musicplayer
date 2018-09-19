@@ -20,7 +20,7 @@
         <div class="middle">
           <div class="middle-l">
             <div class="cd-wrapper" ref="cdWrapper">
-              <div class="cd">
+              <div class="cd" :class="cdCls">
                 <img :src="currentSong.image" alt="" class="image">
               </div>
             </div>
@@ -35,7 +35,8 @@
               <i class="icon-prev"></i>
             </div>
             <div class="icon i-center" >
-              <i class="icon-play" @click="togglePlaying"></i>
+              <!-- <i class="icon-play" @click="togglePlaying"></i> -->
+              <i :class="playIcon" @click="togglePlaying"></i>
             </div>
             <div class="icon i-right">
               <i class="icon-next"></i>
@@ -50,15 +51,18 @@
     <transition name="mini">
       <div class="mini-player" v-show="!fullScreen" @click="open">
         <div class="icon">
-          <img width="40" height="40" :src="currentSong.image" alt="">
+          <img :class="cdCls" width="40" height="40" :src="currentSong.image" alt="">
         </div>
         <div class="text">
           <h2 class="name" v-html="currentSong.name"></h2>
           <p class="desc" v-html="currentSong.singer"></p>
         </div>
-        <div class="control"></div>
+        <div class="control">
+          <i :class="miniIcon" class="icon-mini" @click.stop="togglePlaying"></i>
+        </div>
         <div class="control">
           <i class="icon-playlist"></i>
+          <!-- <i :class="miniIcon" @click.stop="togglePlaying"></i> -->
         </div>
       </div>
     </transition>
@@ -83,7 +87,18 @@ export default {
       'playlist',
       'currentSong',
       'playing'
-    ])
+    ]),
+    // 控制大播放器的播放与暂停按钮显示
+    playIcon () {
+      return this.playing ? 'icon-pause' : 'icon-play'
+    },
+    // 控制小播放器的播放与暂停按钮显示
+    miniIcon () {
+      return this.playing ? 'icon-pause-mini' : 'icon-play-mini'
+    },
+    cdCls () {
+      return this.playing ? 'play' : 'play pause'
+    }
   },
   watch: {
     // 监听是否需要播放
@@ -269,6 +284,10 @@ export default {
             box-sizing border-box
             border 10px solid rgba(255, 255, 255, 0.1)
             border-radius 50%
+            &.play
+              animation rotate 20s linear infinite
+            &.pause
+              animation-play-state paused
             .image
               position absolute
               left 0
@@ -315,6 +334,11 @@ export default {
       padding 0 10px 0 20px
       img
         border-radius 50%
+        &.play
+          animation rotate 20s linear infinite
+        &.pause
+          // css3新属性 暂停动画
+          animation-play-state paused
     .text
       flex 1
       display flex
@@ -335,7 +359,14 @@ export default {
       flex 0 0 30px
       width 30px
       padding 0 10px
-      .icon-playlist
+      .icon-play-mini, .icon-pause-mini, .icon-playlist
         font-size 30px
         color $color-theme-d
+      .icon-mini
+        font-size 32px
+  @keyframes rotate
+    0%
+      transform rotate(0)
+    100%
+      transform rotate(360deg)
 </style>

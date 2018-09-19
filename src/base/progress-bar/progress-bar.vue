@@ -1,8 +1,8 @@
 <template>
-  <div class="progress-bar">
+  <div class="progress-bar" ref="progressBar">
     <div class="bar-inner">
-      <div class="progress"></div>
-      <div class="progress-btn-wrapper">
+      <div class="progress" ref="progress"></div>
+      <div class="progress-btn-wrapper" ref="progressBtn">
         <div class="progress-btn"></div>
       </div>
     </div>
@@ -10,17 +10,44 @@
 </template>
 
 <script>
+import {prefixStyle} from 'common/js/dom.js'
+const transform = prefixStyle('transform')
+// 进度条上的按钮的宽度
+const progressBtnWidth = 16
 export default {
+  props: {
+    percent: {
+      type: Number,
+      default: 0
+    }
+  },
   data () {
     return {
 
+    }
+  },
+  watch: {
+    percent (newPercent) {
+      if (newPercent >= 0) {
+        // 进度条可移动的最大长度
+        const barWidth = this.$refs.progressBar.clientWidth - progressBtnWidth
+        // 进度条移动的实时宽度
+        const offsetWidth = barWidth * newPercent
+        // 设置进度条和按钮的样式
+        this._offset(offsetWidth)
+      }
     }
   },
   created () {
 
   },
   methods: {
-
+    // 进度条和移动按钮移动的距离
+    _offset (offsetWidth) {
+      this.$refs.progress.style.width = `${offsetWidth}px`
+      // this.$refs.progressBtn.style.transform = `translate3d(${offsetWidth}px, 0, 0)`
+      this.$refs.progressBtn.style[transform] = `translate3d(${offsetWidth}px, 0, 0)`
+    }
   }
 }
 </script>

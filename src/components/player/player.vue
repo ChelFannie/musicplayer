@@ -42,7 +42,7 @@
           <div class="progress-wrapper">
             <span class="time time-l">{{format(currentTime)}}</span>
             <div class="progress-bar-wrapper">
-              <progress-bar></progress-bar>
+              <progress-bar :percent="percent"></progress-bar>
             </div>
             <span class="time time-r">{{format(currentSong.duration)}}</span>
           </div>
@@ -139,6 +139,10 @@ export default {
     },
     disableCls () {
       return this.songReady ? '' : 'disable'
+    },
+    // 音乐播放进度条的百分比
+    percent () {
+      return this.currentTime / this.currentSong.duration
     }
   },
   watch: {

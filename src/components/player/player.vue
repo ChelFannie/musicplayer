@@ -1,6 +1,11 @@
 <template>
   <div class="player" v-show="playlist.length>0">
-    <transition name="normal">
+    <transition
+      name="normal"
+      @enter="enter"
+      @after-enter="afterEnter"
+      @leave="leave"
+      @after-leave="afterLeave">
       <div class="normal-player" v-show="fullScreen">
         <div class="background">
           <img width="100%" height="100%" :src="currentSong.image" alt="">
@@ -14,7 +19,7 @@
         </div>
         <div class="middle">
           <div class="middle-l">
-            <div class="cd-wrapper">
+            <div class="cd-wrapper" ref="cdWrapper">
               <div class="cd">
                 <img :src="currentSong.image" alt="" class="image">
               </div>
@@ -62,6 +67,9 @@
 
 <script>
 import {mapGetters, mapMutations} from 'vuex'
+import animations from 'create-keyframe-animation'
+import {prefixStyle} from 'common/js/dom.js'
+const transform = prefixStyle('transform')
 export default {
   data () {
     return {
@@ -88,6 +96,66 @@ export default {
     // 将播放器全屏展示
     open () {
       this.setFullScreen(true)
+    },
+    enter (el, done) {
+      const {x, y, scale} = this._getPosAndScale()
+      // 定义动画
+      let animation = {
+        0: {
+          transform: `translate3d(${x}px, ${y}px, 0) scale(${scale})`
+        },
+        60: {
+          transform: `translate3d(0, 0, 0) scale(1.1)`
+        },
+        100: {
+          transform: `translate3d(0, 0, 0) scale(1)`
+        }
+      }
+      // 使用第三个插件注册动画
+      animations.registerAnimation({
+        name: 'move',
+        animation,
+        presets: {
+          duration: 400,
+          easing: 'linear'
+        }
+      })
+      // done是在动画执行完成后，执行下一个钩子函数
+      animations.runAnimation(this.$refs.cdWrapper, 'move', done)
+    },
+    afterEnter (el) {
+      animations.unregisterAnimation('move')
+      this.$refs.cdWrapper.style.animation = ''
+    },
+    leave (el, done) {
+      this.$refs.cdWrapper.style.transition = 'all 0.4s'
+      const {x, y, scale} = this._getPosAndScale()
+      this.$refs.cdWrapper.style[transform] = `translate3d(${x}px, ${y}px, 0) scale(${scale})`
+      // 在transitionend事件里监听动画是否完成
+      this.$refs.cdWrapper.addEventListener('transitionend', done)
+    },
+    afterLeave (el) {
+      // 动画完成后，清空
+      this.$refs.cdWrapper.style.transition = ''
+      this.$refs.cdWrapper.style[transform] = ''
+    },
+    _getPosAndScale () {
+      // 小播放器mini-player的宽度
+      const targetWidth = 40
+      // 小播放器mini-player中心位置离左边的距离
+      const paddingLeft = 40
+      // 小播放器mini-player中心位置离底部的距离
+      const paddingBottom = 30
+      // 唱片middle的容器离顶部的距离
+      const paddingTop = 80
+      // 唱片容器cd-wrapper的宽度
+      const width = window.innerWidth * 0.8
+      // 缩放比例
+      const scale = targetWidth / width
+      // 唱片的移动距离 初始x, y坐标
+      const x = -(window.innerWidth / 2 - paddingLeft)
+      const y = window.innerHeight - paddingTop - paddingBottom - width / 2
+      return {x, y, scale}
     }
   }
 }

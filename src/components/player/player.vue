@@ -34,8 +34,8 @@
             <div class="icon i-left">
               <i class="icon-prev"></i>
             </div>
-            <div class="icon i-center">
-              <i class="icon-play"></i>
+            <div class="icon i-center" >
+              <i class="icon-play" @click="togglePlaying"></i>
             </div>
             <div class="icon i-right">
               <i class="icon-next"></i>
@@ -62,6 +62,7 @@
         </div>
       </div>
     </transition>
+    <audio ref="audio" :src="currentSong.url"></audio>
   </div>
 </template>
 
@@ -80,14 +81,32 @@ export default {
     ...mapGetters([
       'fullScreen',
       'playlist',
-      'currentSong'
+      'currentSong',
+      'playing'
     ])
+  },
+  watch: {
+    // 监听是否需要播放
+    currentSong () {
+      this.$nextTick(() => {
+        this.$refs.audio.play()
+      })
+    },
+    // 监听播放状态
+    playing (newPlaying) {
+      this.$nextTick(() => {
+        const audio = this.$refs.audio
+        // 如果是true则播放，否则就暂停播放
+        newPlaying ? audio.play() : audio.pause()
+      })
+    }
   },
   created () {
   },
   methods: {
     ...mapMutations({
-      setFullScreen: 'SET_FULL_SCREEN'
+      setFullScreen: 'SET_FULL_SCREEN',
+      setPlayingState: 'SET_PLAYING_STATE'
     }),
     // 将播放器变小
     back () {
@@ -98,8 +117,9 @@ export default {
       this.setFullScreen(true)
     },
     enter (el, done) {
+      // 得到移动的位置和缩放比例
       const {x, y, scale} = this._getPosAndScale()
-      // 定义动画
+      // 设置动画帧数
       let animation = {
         0: {
           transform: `translate3d(${x}px, ${y}px, 0) scale(${scale})`
@@ -124,6 +144,7 @@ export default {
       animations.runAnimation(this.$refs.cdWrapper, 'move', done)
     },
     afterEnter (el) {
+      // 取消动画
       animations.unregisterAnimation('move')
       this.$refs.cdWrapper.style.animation = ''
     },
@@ -138,6 +159,10 @@ export default {
       // 动画完成后，清空
       this.$refs.cdWrapper.style.transition = ''
       this.$refs.cdWrapper.style[transform] = ''
+    },
+    // 控制播放器的播放暂停状态
+    togglePlaying () {
+      this.setPlayingState(!this.playing)
     },
     _getPosAndScale () {
       // 小播放器mini-player的宽度

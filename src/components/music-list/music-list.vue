@@ -55,6 +55,7 @@ export default {
       type: String,
       default: ''
     },
+    // 歌单列表
     songs: {
       type: Array,
       default: function () {

@@ -169,6 +169,7 @@ export default {
       }
       this.$nextTick(() => {
         this.$refs.audio.play()
+        console.log(this.currentSong.getLyric())
       })
     },
     // 监听播放状态

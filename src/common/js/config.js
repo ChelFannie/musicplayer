@@ -4,5 +4,5 @@ export const playMode = {
   // 循环播放
   loop: 1,
   // 随机播放
-  randow: 2
+  random: 2
 }

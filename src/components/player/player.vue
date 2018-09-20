@@ -109,6 +109,7 @@ import {prefixStyle} from 'common/js/dom.js'
 import progressBar from 'base/progress-bar/progress-bar'
 import progressCircle from 'base/progress-circle/progress-circle'
 import {playMode} from 'common/js/config.js'
+import {shuffle} from 'common/js/util.js'
 const transform = prefixStyle('transform')
 export default {
   components: {
@@ -131,7 +132,8 @@ export default {
       'currentSong',
       'playing',
       'currentIndex',
-      'mode'
+      'mode',
+      'sequenceList'
     ]),
     // 控制大播放器的播放与暂停按钮显示
     playIcon () {
@@ -159,7 +161,11 @@ export default {
   },
   watch: {
     // 监听是否需要播放
-    currentSong () {
+    currentSong (newSong, oldSong) {
+      // 解决歌曲在暂停状态时，切换播放模式，歌曲会播放的bug
+      if (newSong.id === oldSong.id) {
+        return
+      }
       this.$nextTick(() => {
         this.$refs.audio.play()
       })
@@ -180,7 +186,8 @@ export default {
       setFullScreen: 'SET_FULL_SCREEN',
       setPlayingState: 'SET_PLAYING_STATE',
       setCurrentIndex: 'SET_CURRENT_INDEX',
-      setMode: 'SET_MODE'
+      setMode: 'SET_MODE',
+      setPlayList: 'SET_PLAYLIST'
     }),
     // 将播放器变小
     back () {
@@ -300,8 +307,24 @@ export default {
     },
     // 更改播放模式
     changeMode () {
+      // 修改样式
       const mode = (this.mode + 1) % 3
       this.setMode(mode)
+      // 修改歌曲列表
+      let list = null
+      if (mode === playMode.random) {
+        list = shuffle(this.sequenceList)
+      } else {
+        list = this.sequenceList
+      }
+      this.setPlayList(list) // 因为此处改变了currentSong,如果歌曲是暂停状态，切换播放模式，歌曲会播放
+      // 更改播放模式后，需要重置currentIndex
+      this.resetCurrentIndex(list)
+    },
+    // 重置currentIndex
+    resetCurrentIndex (list) {
+      const index = list.findIndex(item => item.id === this.currentSong.id)
+      this.setCurrentIndex(index)
     },
     _getPosAndScale () {
       // 小播放器mini-player的宽度

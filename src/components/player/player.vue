@@ -50,7 +50,8 @@
           <!-- 歌曲前进后退收藏功能 -->
           <div class="operators">
             <div class="icon i-left">
-              <i class="icon-sequence"></i>
+              <!-- <i class="icon-sequence" @click="changeMode"></i> -->
+              <i :class="iconMode" @click="changeMode"></i>
             </div>
             <div class="icon i-left" :class="disableCls">
               <i class="icon-prev" @click="prev"></i>
@@ -106,7 +107,8 @@ import {mapGetters, mapMutations} from 'vuex'
 import animations from 'create-keyframe-animation'
 import {prefixStyle} from 'common/js/dom.js'
 import progressBar from 'base/progress-bar/progress-bar'
-import progressCircle from '../../base/progress-circle/progress-circle'
+import progressCircle from 'base/progress-circle/progress-circle'
+import {playMode} from 'common/js/config.js'
 const transform = prefixStyle('transform')
 export default {
   components: {
@@ -128,7 +130,8 @@ export default {
       'playlist',
       'currentSong',
       'playing',
-      'currentIndex'
+      'currentIndex',
+      'mode'
     ]),
     // 控制大播放器的播放与暂停按钮显示
     playIcon () {
@@ -148,6 +151,10 @@ export default {
     // 音乐播放进度条的百分比
     percent () {
       return this.currentTime / this.currentSong.duration
+    },
+    // 播放模式
+    iconMode () {
+      return this.mode === playMode.sequence ? 'icon-sequence' : (this.mode === playMode.loop ? 'icon-loop' : 'icon-random')
     }
   },
   watch: {
@@ -172,7 +179,8 @@ export default {
     ...mapMutations({
       setFullScreen: 'SET_FULL_SCREEN',
       setPlayingState: 'SET_PLAYING_STATE',
-      setCurrentIndex: 'SET_CURRENT_INDEX'
+      setCurrentIndex: 'SET_CURRENT_INDEX',
+      setMode: 'SET_MODE'
     }),
     // 将播放器变小
     back () {
@@ -280,6 +288,7 @@ export default {
     },
     // 子组件传回的比例
     onProgressBarChange (percent) {
+      // 当拖动或者点击进度条，到达当前歌曲的总时长时，自动播放下一曲
       if (percent >= 1) {
         this.next()
       } else {
@@ -288,6 +297,11 @@ export default {
       if (!this.playing) {
         this.togglePlaying()
       }
+    },
+    // 更改播放模式
+    changeMode () {
+      const mode = (this.mode + 1) % 3
+      this.setMode(mode)
     },
     _getPosAndScale () {
       // 小播放器mini-player的宽度

@@ -280,11 +280,14 @@ export default {
     },
     // 子组件传回的比例
     onProgressBarChange (percent) {
-      this.$refs.audio.currentTime = this.currentSong.duration * percent
+      if (percent >= 1) {
+        this.next()
+      } else {
+        this.$refs.audio.currentTime = this.currentSong.duration * percent
+      }
       if (!this.playing) {
         this.togglePlaying()
       }
-      // 7-14
     },
     _getPosAndScale () {
       // 小播放器mini-player的宽度

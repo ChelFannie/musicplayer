@@ -12,11 +12,13 @@ function getRandomInt (min, max) {
  * @param {Array} arr
  */
 export function shuffle (arr) {
-  for (let i = 0; i < arr.length; i++) {
+  // 避免操作时，影响原来的数组
+  let _arr = arr.slice()
+  for (let i = 0; i < _arr.length; i++) {
     let tempIndex = getRandomInt(0, i)
-    let temp = arr[i]
-    arr[i] = arr[tempIndex]
-    arr[tempIndex] = temp
+    let temp = _arr[i]
+    _arr[i] = _arr[tempIndex]
+    _arr[tempIndex] = temp
   }
-  return arr
+  return _arr
 }

@@ -98,7 +98,8 @@
       :src="currentSong.url"
       @play="ready"
       @error="error"
-      @timeupdate="updateTime"></audio>
+      @timeupdate="updateTime"
+      @ended="end"></audio>
   </div>
 </template>
 
@@ -296,11 +297,12 @@ export default {
     // 子组件传回的比例
     onProgressBarChange (percent) {
       // 当拖动或者点击进度条，到达当前歌曲的总时长时，自动播放下一曲
-      if (percent >= 1) {
-        this.next()
-      } else {
-        this.$refs.audio.currentTime = this.currentSong.duration * percent
-      }
+      // if (percent >= 1) {
+      //   this.next()
+      // } else {
+      //   this.$refs.audio.currentTime = this.currentSong.duration * percent
+      // }
+      this.$refs.audio.currentTime = this.currentSong.duration * percent
       if (!this.playing) {
         this.togglePlaying()
       }
@@ -320,6 +322,14 @@ export default {
       this.setPlayList(list) // 因为此处改变了currentSong,如果歌曲是暂停状态，切换播放模式，歌曲会播放
       // 更改播放模式后，需要重置currentIndex
       this.resetCurrentIndex(list)
+    },
+    // 歌曲播放完成派发的事件
+    end () {
+      if (this.mode === playMode.loop) {
+        this.loop()
+      } else {
+        this.next()
+      }
     },
     // 重置currentIndex
     resetCurrentIndex (list) {
@@ -361,6 +371,10 @@ export default {
         len++
       }
       return num
+    },
+    loop () {
+      this.$refs.audio.currentTime = 0
+      this.$refs.audio.play()
     }
   }
 }

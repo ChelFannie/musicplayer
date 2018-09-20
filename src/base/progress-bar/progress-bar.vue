@@ -1,5 +1,5 @@
 <template>
-  <div class="progress-bar" ref="progressBar">
+  <div class="progress-bar" ref="progressBar" @click="progressClick">
     <div class="bar-inner">
       <div class="progress" ref="progress"></div>
       <div
@@ -73,6 +73,13 @@ export default {
     progressTouchEnd () {
       // 拖动结束时，改变拖动的标志位，并将比例传回给父组件
       this.touch.initiated = false
+      this._triggerPercent()
+    },
+    // 点击进度条改变歌曲播放时间
+    progressClick (e) {
+      // Element.getBoundingClientRect()方法返回元素的大小及其相对于视口的位置
+      const offsetWidth = e.pageX - this.$refs.progressBar.getBoundingClientRect().left
+      this._offset(offsetWidth)
       this._triggerPercent()
     },
     // 进度条和移动按钮移动的距离

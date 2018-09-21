@@ -26,10 +26,25 @@
 
         <!-- 唱片 -->
         <div class="middle">
+
+          <!-- 唱片 -->
           <div class="middle-l">
             <div class="cd-wrapper" ref="cdWrapper">
               <div class="cd" :class="cdCls">
                 <img :src="currentSong.image" alt="" class="image">
+              </div>
+            </div>
+          </div>
+
+          <!-- 歌词 -->
+          <div class="middle-r" ref="lyricList">
+            <div class="lyric-wrapper">
+              <div v-if="currentLyric">
+                <p
+                  class="text"
+                  ref="lyricLine"
+                  v-for="(line, index) in currentLyric.lines" :key="index"
+                  :class="{'current': index === currentLineNum}">{{line.txt}}</p>
               </div>
             </div>
           </div>
@@ -126,7 +141,9 @@ export default {
       currentTime: 0,
       radius: 30,
       // 当前歌曲的歌词
-      currentLyric: null
+      currentLyric: null,
+      // 当前歌曲歌词数组的索引值
+      currentLineNum: 0
     }
   },
   computed: {
@@ -384,9 +401,17 @@ export default {
     // 获取歌词
     getLyric () {
       this.currentSong.getLyric().then(lyric => {
-        this.currentLyric = new Lyric(lyric)
+        this.currentLyric = new Lyric(lyric, this.handleLyric)
         console.log(this.currentLyric)
+        if (this.playing) {
+          this.currentLyric.play()
+        }
       })
+    },
+    // 播放的歌词当前行改变触发 lineNum：currentLyric.lines数组中的索引值；txt播放当前行的文字
+    handleLyric ({lineNum, txt}) {
+      console.log(lineNum)
+      this.currentLineNum = lineNum
     }
   }
 }
@@ -487,6 +512,22 @@ export default {
               width 100%
               height 100%
               border-radius 50%
+      .middle-r
+        display inline-block
+        width 100%
+        height 100%
+        overflow hidden
+        .lyric-wrapper
+          width 80%
+          margin 0 auto
+          overflow hidden
+          text-align center
+          .text
+            line-height 32px
+            color $color-text-l
+            font-size $font-size-medium
+            &.current
+              color $color-text
     .bottom
       position absolute
       bottom 50px

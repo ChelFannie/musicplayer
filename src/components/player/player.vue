@@ -443,6 +443,8 @@ export default {
     middleTouchStart (e) {
       // 是否滑动的标志位
       this.touch.initiated = true
+      // 用来判断是否是一次移动
+      this.touch.moved = false
       // 记录滑动的位置
       const touch = e.touches[0]
       this.touch.startX = touch.pageX
@@ -459,6 +461,9 @@ export default {
       // 如果是向下滑动，则不进左右切换
       if (Math.abs(deltaY) > Math.abs(deltaX)) {
         return
+      }
+      if (!this.touch.moved) {
+        this.touch.moved = true
       }
       // 在左右滑动时，起始位置是0，或者-window.innerWidth
       // this.currentShow = 'lyric'
@@ -480,6 +485,9 @@ export default {
       this.$refs.middleL.style[transitionDuration] = 0
     },
     middleTouchEnd (e) {
+      if (!this.touch.moved) {
+        return
+      }
       // 记录偏移的位置
       let offsetWidth
       // 记录cd的透明度

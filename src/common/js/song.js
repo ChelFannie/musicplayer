@@ -27,9 +27,12 @@ export default class Song {
           this.lyric = Base64.decode(res.lyric)
           // console.log(this.lyric)
           resolve(this.lyric)
-        } else {
-          reject('no lyric')
         }
+        // else {
+        //   reject('no lyric')
+        // }
+      }).catch(error => {
+        reject(error)
       })
     })
   }

@@ -37,7 +37,7 @@
           </div>
 
           <!-- 歌词 -->
-          <div class="middle-r" ref="lyricList">
+          <scroll class="middle-r" ref="lyricList" :data="currentLyric && currentLyric.lines">
             <div class="lyric-wrapper">
               <div v-if="currentLyric">
                 <p
@@ -47,7 +47,7 @@
                   :class="{'current': index === currentLineNum}">{{line.txt}}</p>
               </div>
             </div>
-          </div>
+          </scroll>
         </div>
 
         <!-- 底部操作歌曲 -->
@@ -127,11 +127,13 @@ import progressCircle from 'base/progress-circle/progress-circle'
 import {playMode} from 'common/js/config.js'
 import {shuffle} from 'common/js/util.js'
 import Lyric from 'lyric-parser'
+import Scroll from 'base/scroll/scroll'
 const transform = prefixStyle('transform')
 export default {
   components: {
     progressBar,
-    progressCircle
+    progressCircle,
+    Scroll
   },
   data () {
     return {
@@ -404,14 +406,24 @@ export default {
         this.currentLyric = new Lyric(lyric, this.handleLyric)
         console.log(this.currentLyric)
         if (this.playing) {
+          // 调用lyric-parser的play方法，播放歌词
           this.currentLyric.play()
         }
       })
     },
     // 播放的歌词当前行改变触发 lineNum：currentLyric.lines数组中的索引值；txt播放当前行的文字
+    // 查看歌词滚动时，需要隐藏cd
     handleLyric ({lineNum, txt}) {
-      console.log(lineNum)
+      // console.log(lineNum)
       this.currentLineNum = lineNum
+      // 滚动歌词
+      if (this.currentLineNum > 5) {
+        // 滚动到达的目标元素
+        let lineEl = this.$refs.lyricLine[lineNum - 5]
+        this.$refs.lyricList.scrollToElement(lineEl, 1000)
+      } else {
+        this.$refs.lyricList.scrollTo(0, 0, 1000)
+      }
     }
   }
 }

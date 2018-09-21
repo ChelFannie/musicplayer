@@ -213,11 +213,15 @@ export default {
         this.currentTime = 0
         this.currentLineNum = 0
       }
-      this.$nextTick(() => {
+      // this.$nextTick(() => {
+      //   this.$refs.audio.play()
+      //   // console.log(this.currentSong.getLyric())
+      //   this.getLyric()
+      // })
+      setTimeout(() => {
         this.$refs.audio.play()
-        // console.log(this.currentSong.getLyric())
         this.getLyric()
-      })
+      }, 1000)
     },
     // 监听播放状态
     playing (newPlaying) {
@@ -327,13 +331,19 @@ export default {
       if (!this.songReady) {
         return
       }
-      let index = this.currentIndex + 1
-      if (index === this.playlist.length) {
-        index = 0
-      }
-      this.setCurrentIndex(index)
-      if (!this.playing) {
-        this.togglePlaying()
+      // 如果歌曲列表长度为1
+      if (this.playlist.length === 1) {
+        this.loop()
+        return
+      } else {
+        let index = this.currentIndex + 1
+        if (index === this.playlist.length) {
+          index = 0
+        }
+        this.setCurrentIndex(index)
+        if (!this.playing) {
+          this.togglePlaying()
+        }
       }
       this.songReady = false
     },
@@ -372,9 +382,9 @@ export default {
       } else {
         list = this.sequenceList
       }
-      this.setPlayList(list) // 因为此处改变了currentSong,如果歌曲是暂停状态，切换播放模式，歌曲会播放
-      // 更改播放模式后，需要重置currentIndex
+      // 更改播放模式后，需要重置currentIndex 注意要先重置currentIndex
       this.resetCurrentIndex(list)
+      this.setPlayList(list) // 因为此处改变了currentSong,如果歌曲是暂停状态，切换播放模式，歌曲会播放
     },
     // 歌曲播放完成派发的事件
     end () {

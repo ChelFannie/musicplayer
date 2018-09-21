@@ -38,6 +38,10 @@
                 <img :src="currentSong.image" alt="" class="image">
               </div>
             </div>
+            <!-- 当前播放时的歌词 -->
+            <div class="playing-lyric-wrapper">
+              <div class="playing-lyric">{{playLyric}}</div>
+            </div>
           </div>
 
           <!-- 歌词 -->
@@ -152,12 +156,14 @@ export default {
       radius: 30,
       // 当前歌曲的歌词
       currentLyric: null,
-      // 当前歌曲歌词数组的索引值
+      // 当前歌曲歌词数组中正在播放的歌词索引值
       currentLineNum: 0,
       // cd或者歌词显现的状态
       currentShow: 'cd',
       // 中间部分被左右滑动记录的值
-      touch: {}
+      touch: {},
+      // 当前歌曲歌词数组中正在播放的歌词内容
+      playLyric: ''
     }
   },
   computed: {
@@ -436,6 +442,12 @@ export default {
           // 调用lyric-parser的play方法，播放歌词
           this.currentLyric.play()
         }
+      }).catch(error => {
+        // 如果获取不到歌词，则要清理数据
+        this.currentLyric = null
+        this.currentLineNum = 0
+        this.playLyric = ''
+        console.log(error)
       })
     },
     // 播放的歌词当前行改变触发 lineNum：currentLyric.lines数组中的索引值；txt播放当前行的文字
@@ -443,6 +455,7 @@ export default {
     handleLyric ({lineNum, txt}) {
       // console.log(lineNum)
       this.currentLineNum = lineNum
+      this.playLyric = txt
       // 滚动歌词
       if (this.currentLineNum > 5) {
         // 滚动到达的目标元素
@@ -630,6 +643,16 @@ export default {
               width 100%
               height 100%
               border-radius 50%
+        .playing-lyric-wrapper
+          width 80%
+          margin 30px auto 0
+          overflow hidden
+          text-align center
+          .playing-lyric
+            height 20px
+            line-height 20px
+            font-size $font-size-medium
+            color $color-text-l
       .middle-r
         display inline-block
         width 100%

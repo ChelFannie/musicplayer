@@ -1,5 +1,5 @@
 <template>
- <div class="recommend">
+ <div class="recommend" ref="recommend">
    <!-- 要等到歌单数据已经返回了，才能初始化滚动插件 -->
    <scroll ref="scroll" class="recommend-content" :data="discList">
      <!-- 使用BScroll实现滚动，都是对组件的第一个元素有效 -->
@@ -45,8 +45,11 @@ import Slider from 'base/slider/slider'
 import Loading from 'base/loading/loading'
 import {getRecommend, getDiscList} from 'api/recommend.js'
 import {ERR_OK} from 'api/config.js'
+import {playlistMixin} from 'common/js/mixins.js'
+
 export default {
   name: 'recommend',
+  mixins: [playlistMixin],
   components: {
     Slider,
     Scroll,
@@ -90,6 +93,12 @@ export default {
         this.$refs.scroll.refresh()
         this.checkLoaded = true
       }
+    },
+    // 使用mixin对象，根据是否有小播放器，设置底部的bottom值
+    handlePlaylist (playlist) {
+      const bottom = playlist.length > 0 ? '60px' : 0
+      this.$refs.recommend.style.bottom = bottom
+      this.$refs.scroll.refresh()
     }
   }
 }

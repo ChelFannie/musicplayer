@@ -37,6 +37,7 @@ import SongList from 'base/song-list/song-list'
 import Loading from 'base/loading/loading'
 import {prefixStyle} from 'common/js/dom.js'
 import {mapActions} from 'vuex'
+import {playlistMixin} from 'common/js/mixins.js'
 
 // 给layer滚动到title位置
 const RESERVED_HEIGHT = 40
@@ -45,6 +46,7 @@ const transform = prefixStyle('transform')
 const backdrop = prefixStyle('backdrop')
 // console.log(transform)
 export default {
+  mixins: [playlistMixin],
   components: {
     Scroll,
     SongList,
@@ -153,6 +155,12 @@ export default {
       this.randomPlay({
         list: this.songs
       })
+    },
+    // 使用mixin对象，根据是否有小播放器，设置底部的bottom值
+    handlePlaylist (playlist) {
+      const bottom = playlist.length > 0 ? '60px' : 0
+      this.$refs.list.$el.style.bottom = bottom
+      this.$refs.list.refresh()
     }
   }
 }

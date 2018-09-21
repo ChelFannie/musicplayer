@@ -1,6 +1,6 @@
 <template>
- <div class="singer">
-  <list-view :data="singers" @select="selectSinger"></list-view>
+ <div class="singer" ref="singer">
+  <list-view :data="singers" @select="selectSinger" ref="list"></list-view>
   <router-view></router-view>
  </div>
 </template>
@@ -11,12 +11,14 @@ import {ERR_OK} from 'api/config.js'
 import Singer from '../../common/js/singer.js'
 import ListView from '../../base/listview/listview'
 import {mapMutations} from 'vuex'
+import {playlistMixin} from 'common/js/mixins.js'
 
 const HOT_NAME = '热门'
 // 定义数据的前10条定义为热门数据
 const HOT_SINGER_LEN = 10
 export default {
   name: 'singer',
+  mixins: [playlistMixin],
   components: {
     ListView
   },
@@ -108,6 +110,12 @@ export default {
         return a.title.charCodeAt(0) - b.title.charCodeAt(0)
       })
       return hot.concat(ret)
+    },
+    // 使用mixin对象，根据是否有小播放器，设置底部的bottom值
+    handlePlaylist (playlist) {
+      const bottom = playlist.length > 0 ? '60px' : 0
+      this.$refs.singer.style.bottom = bottom
+      this.$refs.list.refresh()
     }
   }
 }

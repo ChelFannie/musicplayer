@@ -182,6 +182,10 @@ export default {
       // console.log(position)
       this.scrollY = position.y
     },
+    // 给父组件暴露一个方法
+    refresh () {
+      this.$refs.listview.refresh()
+    },
     // 调用BScroll中的scrollToElement 第二个参数的函数是是否需要滚动动画，这里不需要
     _scrollTo (index) {
       // index如果null或者拖动到顶部或者顶部时，处理index的边界问题

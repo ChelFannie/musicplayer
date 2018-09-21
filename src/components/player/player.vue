@@ -25,10 +25,14 @@
         </div>
 
         <!-- 唱片 -->
-        <div class="middle">
+        <div
+          class="middle"
+          @touchstart.prevent="middleTouchStart"
+          @touchmove.prevent="middleTouchMove"
+          @touchend.prevent="middleTouchEnd">
 
           <!-- 唱片 -->
-          <div class="middle-l">
+          <div class="middle-l" ref="middleL">
             <div class="cd-wrapper" ref="cdWrapper">
               <div class="cd" :class="cdCls">
                 <img :src="currentSong.image" alt="" class="image">
@@ -52,7 +56,10 @@
 
         <!-- 底部操作歌曲 -->
         <div class="bottom">
-
+          <div class="dot-wrapper">
+            <span class="dot" :class="{'active': currentShow === 'cd'}"></span>
+            <span class="dot" :class="{'active': currentShow === 'lyric'}"></span>
+          </div>
           <!-- 歌曲进度条 -->
           <div class="progress-wrapper">
             <span class="time time-l">{{format(currentTime)}}</span>
@@ -129,6 +136,7 @@ import {shuffle} from 'common/js/util.js'
 import Lyric from 'lyric-parser'
 import Scroll from 'base/scroll/scroll'
 const transform = prefixStyle('transform')
+const transitionDuration = prefixStyle('transitionDuration')
 export default {
   components: {
     progressBar,
@@ -145,7 +153,11 @@ export default {
       // 当前歌曲的歌词
       currentLyric: null,
       // 当前歌曲歌词数组的索引值
-      currentLineNum: 0
+      currentLineNum: 0,
+      // cd或者歌词显现的状态
+      currentShow: 'cd',
+      // 中间部分被左右滑动记录的值
+      touch: {}
     }
   },
   computed: {
@@ -205,6 +217,8 @@ export default {
     }
   },
   created () {
+    // // 中间部分被左右滑动记录的值
+    // this.touch = {}
   },
   methods: {
     ...mapMutations({
@@ -404,7 +418,7 @@ export default {
     getLyric () {
       this.currentSong.getLyric().then(lyric => {
         this.currentLyric = new Lyric(lyric, this.handleLyric)
-        console.log(this.currentLyric)
+        // console.log(this.currentLyric)
         if (this.playing) {
           // 调用lyric-parser的play方法，播放歌词
           this.currentLyric.play()
@@ -424,6 +438,77 @@ export default {
       } else {
         this.$refs.lyricList.scrollTo(0, 0, 1000)
       }
+    },
+    // 滑动中间部分
+    middleTouchStart (e) {
+      // 是否滑动的标志位
+      this.touch.initiated = true
+      // 记录滑动的位置
+      const touch = e.touches[0]
+      this.touch.startX = touch.pageX
+      this.touch.startY = touch.pageY
+    },
+    middleTouchMove (e) {
+      if (!this.touch.initiated) {
+        return
+      }
+      // 记录滑动的偏移量
+      const touch = e.touches[0]
+      const deltaX = touch.pageX - this.touch.startX
+      const deltaY = touch.pageY - this.touch.startY
+      // 如果是向下滑动，则不进左右切换
+      if (Math.abs(deltaY) > Math.abs(deltaX)) {
+        return
+      }
+      // 在左右滑动时，起始位置是0，或者-window.innerWidth
+      // this.currentShow = 'lyric'
+      const left = this.currentShow === 'cd' ? 0 : -window.innerWidth
+      // 如果是从右向左滑动
+      const move = Math.max(-window.innerWidth, left + deltaX)
+      // 如果是从左向右滑动
+      // const move1 = Math.min(0, left + deltaX)
+      // 滑动的偏移量
+      const offsetWidth = Math.min(0, move)
+      this.$refs.lyricList.$el.style[transform] = `translate3d(${offsetWidth}px, 0, 0)`
+      // 滑动的比例
+      this.touch.percent = Math.abs(offsetWidth / window.innerWidth)
+      // console.log(this.touch.percent)
+      // 滑动过程中添加动画
+      this.$refs.lyricList.$el.style[transform] = `translate3d(${offsetWidth}px, 0, 0)`
+      this.$refs.lyricList.$el.style[transitionDuration] = 0
+      this.$refs.middleL.style.opacity = 1 - this.touch.percent
+      this.$refs.middleL.style[transitionDuration] = 0
+    },
+    middleTouchEnd (e) {
+      // 记录偏移的位置
+      let offsetWidth
+      // 记录cd的透明度
+      let opacity
+      // 如果是从右向左滑动
+      if (this.currentShow === 'cd') {
+        if (this.touch.percent > 0.1) {
+          this.currentShow = 'lyric'
+          opacity = 0
+          offsetWidth = -window.innerWidth
+        } else {
+          opacity = 1
+          offsetWidth = 0
+        }
+      } else if (this.currentShow === 'lyric') {
+        if (this.touch.percent < 0.9) {
+          this.currentShow = 'cd'
+          opacity = 1
+          offsetWidth = 0
+        } else {
+          opacity = 0
+          offsetWidth = -window.innerWidth
+        }
+      }
+      this.$refs.middleL.style.opacity = opacity
+      this.$refs.middleL.style[transitionDuration] = `0.3s`
+      this.$refs.lyricList.$el.style[transform] = `translate3d(${offsetWidth}px, 0, 0)`
+      this.$refs.lyricList.$el.style[transitionDuration] = `0.3s`
+      this.touch.initiated = false
     }
   }
 }
@@ -544,6 +629,20 @@ export default {
       position absolute
       bottom 50px
       width 100%
+      .dot-wrapper
+        text-align center
+        font-size 0
+        .dot
+          display inline-block
+          width 8px
+          height 8px
+          border-radius 50%
+          background $color-text-l
+          margin 0 4px
+          &.active
+            width 20px
+            border-radius 5px
+            background $color-text-ll
       .progress-wrapper
         display flex
         align-items center

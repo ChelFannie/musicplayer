@@ -147,7 +147,7 @@ export default {
     return {
       // 歌曲是否播放
       songReady: false,
-      // 当前播放时间
+      // 歌曲当前播放时间
       currentTime: 0,
       radius: 30,
       // 当前歌曲的歌词
@@ -200,6 +200,12 @@ export default {
       // 解决歌曲在暂停状态时，切换播放模式，歌曲会播放的bug
       if (newSong.id === oldSong.id) {
         return
+      }
+      // 切换歌曲时，要停掉歌词的定时器
+      if (this.currentLyric) {
+        this.currentLyric.stop()
+        this.currentTime = 0
+        this.currentLineNum = 0
       }
       this.$nextTick(() => {
         this.$refs.audio.play()
@@ -287,6 +293,10 @@ export default {
         return
       }
       this.setPlayingState(!this.playing)
+      // 切换歌词的播放状态
+      if (this.currentLyric) {
+        this.currentLyric.togglePlay()
+      }
     },
     // 播放上一曲
     prev () {
@@ -334,15 +344,14 @@ export default {
     },
     // 子组件传回的比例
     onProgressBarChange (percent) {
-      // 当拖动或者点击进度条，到达当前歌曲的总时长时，自动播放下一曲
-      // if (percent >= 1) {
-      //   this.next()
-      // } else {
-      //   this.$refs.audio.currentTime = this.currentSong.duration * percent
-      // }
-      this.$refs.audio.currentTime = this.currentSong.duration * percent
+      const currentTime = this.currentSong.duration * percent
+      this.$refs.audio.currentTime = currentTime
       if (!this.playing) {
         this.togglePlaying()
+      }
+      // 拖动进度条，切换歌词到当前行
+      if (this.currentLyric) {
+        this.currentLyric.seek(currentTime * 1000)
       }
     },
     // 更改播放模式
@@ -413,6 +422,10 @@ export default {
     loop () {
       this.$refs.audio.currentTime = 0
       this.$refs.audio.play()
+      // 循环播放完成，设置歌词到第一行
+      if (this.currentLyric) {
+        this.currentLyric.seek(0)
+      }
     },
     // 获取歌词
     getLyric () {

@@ -111,6 +111,7 @@ import progressBar from 'base/progress-bar/progress-bar'
 import progressCircle from 'base/progress-circle/progress-circle'
 import {playMode} from 'common/js/config.js'
 import {shuffle} from 'common/js/util.js'
+import Lyric from 'lyric-parser'
 const transform = prefixStyle('transform')
 export default {
   components: {
@@ -123,7 +124,9 @@ export default {
       songReady: false,
       // 当前播放时间
       currentTime: 0,
-      radius: 30
+      radius: 30,
+      // 当前歌曲的歌词
+      currentLyric: null
     }
   },
   computed: {
@@ -169,7 +172,8 @@ export default {
       }
       this.$nextTick(() => {
         this.$refs.audio.play()
-        console.log(this.currentSong.getLyric())
+        // console.log(this.currentSong.getLyric())
+        this.getLyric()
       })
     },
     // 监听播放状态
@@ -376,6 +380,13 @@ export default {
     loop () {
       this.$refs.audio.currentTime = 0
       this.$refs.audio.play()
+    },
+    // 获取歌词
+    getLyric () {
+      this.currentSong.getLyric().then(lyric => {
+        this.currentLyric = new Lyric(lyric)
+        console.log(this.currentLyric)
+      })
     }
   }
 }

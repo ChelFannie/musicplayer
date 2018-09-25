@@ -16,7 +16,9 @@ const state = {
   // 当前播放的音乐的索引
   currentIndex: -1,
   // 歌曲详情信息
-  disc: {}
+  disc: {},
+  // 排行榜详情信息
+  topList: {}
 }
 
 export default state

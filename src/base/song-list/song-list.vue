@@ -6,6 +6,7 @@
       v-for="(item, index) in songs"
       :key="index"
       @click="selectItem(item, index)">
+        <div class="rank" v-show="rank">1111</div>
        <div class="content">
          <h2 class="name">{{item.name}}</h2>
          <p class="desc">{{getDesc(item)}}</p>
@@ -23,6 +24,10 @@ export default {
       default: function () {
         return []
       }
+    },
+    rank: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -55,6 +60,12 @@ export default {
     box-sizing border-box
     height 64px
     font-size $font-size-medium
+    .rank
+      flex 0 0 25px
+      width 25px
+      height: 20px
+      margin-right 30px
+      text-align center
     .content
       flex 1
       line-height 20px

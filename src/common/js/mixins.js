@@ -1,7 +1,7 @@
 // 定义公共的mixin方法，供多个组件使用
 import {mapGetters} from 'vuex'
 
-// 获取播放列表
+// 小播放器存在
 export const playlistMixin = {
   computed: {
     ...mapGetters([

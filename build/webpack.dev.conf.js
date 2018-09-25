@@ -68,6 +68,30 @@ const devWebpackConfig = merge(baseWebpackConfig, {
           console.log(e)
         })
       }),
+      apiRoutes.get('/api/getSongList', (req, res) => {
+        const url = 'https://c.y.qq.com/qzone/fcg-bin/fcg_ucc_getcdinfo_byids_cp.fcg'
+        axios.get(url, {
+          headers: {
+            referer: 'https://c.y.qq.com/',
+            host: 'c.y.qq.com'
+          },
+          params: req.query //这是请求的query 
+        }).then((response) => {
+          //response是api地址返回的，数据在data里。
+          let ret = response.data
+          if (typeof ret === 'string') {
+            let index = ret.indexOf('jsonCallback(')
+            if (index > -1) {
+              ret = ret.split('jsonCallback(')[1]
+              ret = ret.substring(0, ret.length - 1)
+              ret = JSON.parse(ret)
+            }
+          }
+          res.json(ret)
+        }).catch((e) => {
+          console.log(e)
+        })
+      }),
       // 获取歌词
       apiRoutes.get('/api/lyric', (req, res) => {
         const url = 'https://c.y.qq.com/lyric/fcgi-bin/fcg_query_lyric_new.fcg'

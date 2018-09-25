@@ -1,14 +1,15 @@
 <template>
   <transition name="slide">
-    <music-list :title="title" :bg-image="bgImage"></music-list>
+    <music-list :title="title" :bg-image="bgImage" :songs="songs"></music-list>
   </transition>
 </template>
 
 <script>
 import MusicList from 'components/music-list/music-list'
-import {mapGetters} from 'vuex'
+import {mapGetters, mapMutations} from 'vuex'
 import {getSongList} from 'api/recommend'
 import {ERR_OK} from 'api/config.js'
+import {createSong} from 'common/js/song'
 
 export default {
   components: {
@@ -16,7 +17,7 @@ export default {
   },
   data () {
     return {
-
+      songs: []
     }
   },
   computed: {
@@ -31,16 +32,35 @@ export default {
     }
   },
   created () {
+    if (Object.keys(this.disc).length) {
+      localStorage.setItem('disc', JSON.stringify(this.disc))
+    } else {
+      this.setDisc(JSON.parse(localStorage.getItem('disc')))
+    }
     this._getSongList()
   },
   methods: {
+    // 获取歌单详情页数据
     _getSongList () {
       getSongList(this.disc.dissid).then(res => {
         if (res.code === ERR_OK) {
-          console.log(res.cdlist[0].songlist)
+          // console.log(res.cdlist[0].songlist)
+          this.songs = this._normalizeSongs(res.cdlist[0].songlist)
         }
       })
-    }
+    },
+    _normalizeSongs (list) {
+      let ret = []
+      list.forEach(musicData => {
+        if (musicData.songid && musicData.albumid) {
+          ret.push(createSong(musicData))
+        }
+      })
+      return ret
+    },
+    ...mapMutations({
+      setDisc: 'SET_DISC'
+    })
   }
 }
 </script>

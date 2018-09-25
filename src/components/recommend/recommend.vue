@@ -111,7 +111,6 @@ export default {
     },
     // 跳转到歌曲详情页
     selectItem (item) {
-      console.log(item)
       this.$router.push({path: `/recommend/${item.dissid}`})
       this.setDisc(item)
     }

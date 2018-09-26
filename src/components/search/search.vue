@@ -20,6 +20,7 @@
    <div class="search-result" v-show="query">
      <suggest :query="query"></suggest>
    </div>
+   <router-view></router-view>
  </div>
 </template>
 
@@ -52,7 +53,7 @@ export default {
       getHotKey().then(res => {
         if (res.code === ERR_OK) {
           // console.log(res.data.hotkey)
-          this.hotKey = res.data.hotkey.slice(0, 10)
+          this.hotKey = res.data.hotkey.slice(0, 20)
         }
       })
     },

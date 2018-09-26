@@ -1,12 +1,12 @@
 <template>
   <div class="suggest">
     <ul class="suggest-list">
-      <li class="suggest-item">
+      <li class="suggest-item" v-for="(item, index) in result" :key="index">
         <div class="icon">
-          <i></i>
+          <i :class="getIconCls(item)"></i>
         </div>
         <div class="name">
-          <p class="text"></p>
+          <p class="text">{{getDisplayName(item)}}</p>
         </div>
       </li>
     </ul>
@@ -15,9 +15,11 @@
 
 <script>
 import {search} from 'api/search.js'
+import {createSong} from 'common/js/song.js'
 import {ERR_OK} from 'api/config.js'
 
 const perpage = 20
+const TYPE_SINGER = 'singer'
 export default {
   props: {
     // 搜索内容
@@ -34,7 +36,9 @@ export default {
   data () {
     return {
       // 页数
-      page: 1
+      page: 1,
+      // 搜索结果
+      result: []
     }
   },
   watch: {
@@ -54,9 +58,45 @@ export default {
       search(this.query, this.showSinger, this.page, perpage)
         .then(res => {
           if (res.code === ERR_OK) {
-            console.log(res.data)
+            this.result = this._getResult(res.data)
           }
         })
+    },
+    // 处理搜索结果
+    _getResult (data) {
+      let ret = []
+      if (data.zhida && data.zhida.albummid) {
+        ret.push({...data.zhida, type: TYPE_SINGER})
+      }
+      if (data.song) {
+        ret.push(...this._normalizeSongs(data.song.list))
+      }
+      return ret
+    },
+    _normalizeSongs (list) {
+      let ret = []
+      list.forEach((musicData) => {
+        if (musicData.songid && musicData.albummid) {
+          ret.push(createSong(musicData))
+        }
+      })
+      return ret
+    },
+    // 获取搜索列表icon的样式
+    getIconCls (item) {
+      if (item.type === TYPE_SINGER) {
+        return 'icon-mine'
+      } else {
+        return 'icon-music'
+      }
+    },
+    // 获取搜索列表文本内容
+    getDisplayName (item) {
+      if (item.type === TYPE_SINGER) {
+        return item.singername
+      } else {
+        return `${item.singer}-${item.name}`
+      }
     }
   }
 }

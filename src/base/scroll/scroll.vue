@@ -26,6 +26,11 @@ export default {
     listenScroll: {
       type: Boolean,
       default: false
+    },
+    // 上拉刷新
+    pullup: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -61,10 +66,20 @@ export default {
         probeType: this.probeType,
         click: this.click
       })
+      // 监听scroll事件
       if (this.listenScroll) {
         let vm = this
         this.scroll.on('scroll', position => {
           vm.$emit('scroll', position)
+        })
+      }
+      // 上拉刷新
+      if (this.pullup) {
+        this.scroll.on('scrollEnd', position => {
+          // position.y是个负值
+          if (position.y <= this.scroll.maxScrollY + 50) {
+            this.$emit('scrollToEnd')
+          }
         })
       }
     },

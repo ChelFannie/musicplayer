@@ -23,6 +23,8 @@ export default {
       query: ''
     }
   },
+  watch: {
+  },
   created () {
     this.$watch('query', (newValue) => {
       this.$emit('query', newValue)
@@ -31,6 +33,9 @@ export default {
   methods: {
     clear () {
       this.query = ''
+    },
+    setQuery (query) {
+      this.query = query
     }
   }
 }

@@ -1,14 +1,18 @@
 <template>
  <div class="search">
    <div class="search-box-wrapper">
-    <search-box></search-box>
+    <search-box ref="searchBox"></search-box>
    </div>
    <div class="shortcut-wrapper">
      <div class="shortcut">
        <div class="hot-key">
          <h1 class="title">热门搜索</h1>
          <ul>
-           <li class="item" v-for="(item, index) in hotKey" :key="index">{{item.k}}</li>
+           <li
+            class="item"
+            v-for="(item, index) in hotKey"
+            :key="index"
+            @click="addQuery(item.k)">{{item.k}}</li>
          </ul>
        </div>
      </div>
@@ -35,6 +39,7 @@ export default {
     this._getHotKey()
   },
   methods: {
+    // 获取数据
     _getHotKey () {
       getHotKey().then(res => {
         if (res.code === ERR_OK) {
@@ -42,6 +47,9 @@ export default {
           this.hotKey = res.data.hotkey.slice(0, 10)
         }
       })
+    },
+    addQuery (query) {
+      this.$refs.searchBox.setQuery(query)
     }
   }
 }

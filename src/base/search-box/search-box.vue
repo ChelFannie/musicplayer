@@ -57,6 +57,7 @@ export default {
       background $color-highlight-background
       color $color-text
       font-size $font-size-medium
+      outline none
       // 设置占位字符的样式
       &::placeholder
         color $color-text-d

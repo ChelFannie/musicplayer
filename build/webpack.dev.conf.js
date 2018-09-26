@@ -115,6 +115,30 @@ const devWebpackConfig = merge(baseWebpackConfig, {
         }).catch((e) => {
           console.log(e)
         })
+      }),
+      apiRoutes.get('/api/search', (req, res) => {
+        const url = 'https://c.y.qq.com/soso/fcgi-bin/search_for_qq_cp'
+        axios.get(url, {
+          headers: {
+            referer: 'https://c.y.qq.com',
+            host: 'c.y.qq.com'
+          },
+          params: req.query //这是请求的query 
+        }).then((response) => {
+          //response是api地址返回的，数据在data里。
+          let ret = response.data
+          if (typeof ret === 'string') {
+            let index = ret.indexOf('callback(')
+            if (index > -1) {
+              ret = ret.split('callback(')[1]
+              ret = ret.substring(0, ret.length - 1)
+              ret = JSON.parse(ret)
+            }
+          }
+          res.json(ret)
+        }).catch((e) => {
+          console.log(e)
+        })
       })
       // app.use('/api', apiRoutes)
     }

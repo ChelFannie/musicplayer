@@ -1,9 +1,9 @@
 <template>
  <div class="search">
    <div class="search-box-wrapper">
-    <search-box ref="searchBox"></search-box>
+    <search-box ref="searchBox" @query="onQueryChange"></search-box>
    </div>
-   <div class="shortcut-wrapper">
+   <div class="shortcut-wrapper" v-show="!query">
      <div class="shortcut">
        <div class="hot-key">
          <h1 class="title">热门搜索</h1>
@@ -17,6 +17,9 @@
        </div>
      </div>
    </div>
+   <div class="search-result" v-show="query">
+     <suggest :query="query"></suggest>
+   </div>
  </div>
 </template>
 
@@ -24,15 +27,20 @@
 import SearchBox from 'base/search-box/search-box'
 import {getHotKey} from 'api/search.js'
 import {ERR_OK} from 'api/config.js'
+import Suggest from 'components/suggest/suggest'
 
 export default {
   name: 'search',
   components: {
-    SearchBox
+    SearchBox,
+    Suggest
   },
   data () {
     return {
-      hotKey: []
+      // 热门搜索词
+      hotKey: [],
+      // 查询内容
+      query: ''
     }
   },
   created () {
@@ -48,8 +56,13 @@ export default {
         }
       })
     },
+    // 点击热门搜索词
     addQuery (query) {
       this.$refs.searchBox.setQuery(query)
+    },
+    // 接受子组件值
+    onQueryChange (query) {
+      this.query = query
     }
   }
 }
@@ -83,4 +96,9 @@ export default {
               background $color-highlight-background
               font-size $font-size-medium
               color $color-text-d
+    .search-result
+      position: fixed
+      width: 100%
+      top: 178px
+      bottom: 0
 </style>

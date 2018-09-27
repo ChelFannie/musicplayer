@@ -183,6 +183,10 @@ export default {
     // 列表滚动之前
     listScroll () {
       this.$emit('listScroll')
+    },
+    // 给父组件暴露一个方法
+    refresh () {
+      this.$refs.suggest.refresh()
     }
   }
 }

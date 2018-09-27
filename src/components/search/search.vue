@@ -17,8 +17,8 @@
        </div>
      </div>
    </div>
-   <div class="search-result" v-show="query">
-     <suggest :query="query" @listScroll="blurInput"></suggest>
+   <div class="search-result" v-show="query" ref="searchResult">
+     <suggest :query="query" @listScroll="blurInput" ref="suggest"></suggest>
    </div>
    <router-view></router-view>
  </div>
@@ -29,9 +29,11 @@ import SearchBox from 'base/search-box/search-box'
 import {getHotKey} from 'api/search.js'
 import {ERR_OK} from 'api/config.js'
 import Suggest from 'components/suggest/suggest'
+import {playlistMixin} from 'common/js/mixins.js'
 
 export default {
   name: 'search',
+  mixins: [playlistMixin],
   components: {
     SearchBox,
     Suggest
@@ -68,6 +70,12 @@ export default {
     // 列表滚动之前，让输入框失去焦点
     blurInput () {
       this.$refs.searchBox.blur()
+    },
+    // 使用mixin对象，根据是否有小播放器，设置底部的bottom值
+    handlePlaylist (playlist) {
+      const bottom = playlist.length > 0 ? '60px' : 0
+      this.$refs.searchResult.style.bottom = bottom
+      this.$refs.suggest.refresh()
     }
   }
 }

@@ -22,3 +22,21 @@ export function shuffle (arr) {
   }
   return _arr
 }
+
+/**
+ * 截流频繁向后台发送请求
+ * @param {Function} func - 被截流的函数
+ * @param {Number} delay - 延迟时间
+ */
+export function debounce (func, delay) {
+  let timer
+
+  return function (...args) {
+    if (timer) {
+      clearTimeout(timer)
+    }
+    timer = setTimeout(() => {
+      func.apply(this, args)
+    }, delay)
+  }
+}

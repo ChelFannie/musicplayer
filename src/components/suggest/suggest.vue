@@ -20,6 +20,9 @@
       </li>
       <loading v-show="hasMore" title="努力加载中..."></loading>
     </ul>
+    <div class="no-result-wrapper" v-show="!hasMore && !result.length">
+      <no-result title="暂无搜索结果"></no-result>
+    </div>
   </scroll>
 </template>
 
@@ -29,8 +32,9 @@ import {createSong} from 'common/js/song.js'
 import {ERR_OK} from 'api/config.js'
 import Scroll from 'base/scroll/scroll'
 import Loading from 'base/loading/loading'
-import Singer from '../../common/js/singer.js'
+import Singer from 'common/js/singer.js'
 import {mapMutations, mapActions} from 'vuex'
+import NoResult from 'base/no-result/no-result'
 
 // 搜索条数
 const perpage = 20
@@ -39,7 +43,8 @@ export default {
   name: 'suggest',
   components: {
     Scroll,
-    Loading
+    Loading,
+    NoResult
   },
   props: {
     // 搜索内容
@@ -199,4 +204,9 @@ export default {
           overflow hidden
           .text
             no-wrap()
+    .no-result-wrapper
+      position: absolute
+      width: 100%
+      top: 50%
+      transform: translateY(-50%)
 </style>

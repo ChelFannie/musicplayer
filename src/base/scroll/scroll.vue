@@ -31,6 +31,10 @@ export default {
     pullup: {
       type: Boolean,
       default: false
+    },
+    beforeScroll: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -80,6 +84,12 @@ export default {
           if (position.y <= this.scroll.maxScrollY + 50) {
             this.$emit('scrollToEnd')
           }
+        })
+      }
+      // 滚动之前的操作
+      if (this.beforeScroll) {
+        this.scroll.on('beforeScrollStart', () => {
+          this.$emit('beforeScroll')
         })
       }
     },

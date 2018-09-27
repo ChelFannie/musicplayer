@@ -5,7 +5,8 @@
       v-model="query"
       type="text"
       class="box"
-      :placeholder="placeholder">
+      :placeholder="placeholder"
+      ref="query">
     <i class="icon-dismiss" v-show="query" @click="clear"></i>
   </div>
 </template>
@@ -30,7 +31,7 @@ export default {
     // this.$watch('query', (newValue) => {
     this.$watch('query', debounce((newValue) => {
       this.$emit('query', newValue)
-    }, 200))
+    }, 300))
   },
   methods: {
     clear () {
@@ -38,6 +39,9 @@ export default {
     },
     setQuery (query) {
       this.query = query
+    },
+    blur () {
+      this.$refs.query.blur()
     }
   }
 }

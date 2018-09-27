@@ -3,7 +3,9 @@
     class="suggest"
     :data="result"
     :pullup="pullup"
+    :beforeScroll="beforeScroll"
     @scrollToEnd="searchMore"
+    @beforeScroll="listScroll"
     ref="suggest">
     <ul class="suggest-list">
       <li
@@ -67,7 +69,8 @@ export default {
       // 上拉刷新
       pullup: true,
       // 是否可以下拉刷新
-      hasMore: false
+      hasMore: false,
+      beforeScroll: true
     }
   },
   watch: {
@@ -176,6 +179,10 @@ export default {
       } else {
         this.insertSong(item)
       }
+    },
+    // 列表滚动之前
+    listScroll () {
+      this.$emit('listScroll')
     }
   }
 }

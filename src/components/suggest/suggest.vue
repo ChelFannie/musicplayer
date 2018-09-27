@@ -30,7 +30,7 @@ import {ERR_OK} from 'api/config.js'
 import Scroll from 'base/scroll/scroll'
 import Loading from 'base/loading/loading'
 import Singer from '../../common/js/singer.js'
-import {mapMutations} from 'vuex'
+import {mapMutations, mapActions} from 'vuex'
 
 // 搜索条数
 const perpage = 20
@@ -80,6 +80,9 @@ export default {
     ...mapMutations({
       setSinger: 'SET_SINGER'
     }),
+    ...mapActions([
+      'insertSong'
+    ]),
     // 查询搜索内容
     _search () {
       // 第一次搜索
@@ -101,7 +104,6 @@ export default {
       let ret = []
       if (data.zhida && data.zhida.singermid && data.zhida.type === 2) {
         ret.push({...data.zhida, type: TYPE_SINGER})
-        console.log(111111)
       }
       if (data.song) {
         ret.push(...this._normalizeSongs(data.song.list))
@@ -158,6 +160,7 @@ export default {
     },
     // 点击搜索列表
     selectItem (item) {
+      // 如果是歌手，则跳转到歌手详情页，如果是歌曲，就追加到当前播放歌曲的后面
       if (item.type === TYPE_SINGER) {
         const singer = new Singer({
           id: item.singermid,
@@ -165,6 +168,8 @@ export default {
         })
         this.$router.push({path: `/search/${singer.id}`})
         this.setSinger(singer)
+      } else {
+        this.insertSong(item)
       }
     }
   }

@@ -179,6 +179,8 @@ export default {
       } else {
         this.insertSong(item)
       }
+      // 将点击的搜索内容存储在本地
+      this.$emit('select', item)
     },
     // 列表滚动之前
     listScroll () {

@@ -18,7 +18,9 @@ const state = {
   // 歌曲详情信息
   disc: {},
   // 排行榜详情信息
-  topList: {}
+  topList: {},
+  // 搜索历史
+  searchHistory: []
 }
 
 export default state

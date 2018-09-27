@@ -18,7 +18,11 @@
      </div>
    </div>
    <div class="search-result" v-show="query" ref="searchResult">
-     <suggest :query="query" @listScroll="blurInput" ref="suggest"></suggest>
+     <suggest
+      :query="query"
+      @listScroll="blurInput"
+      @select="saveSearch"
+      ref="suggest"></suggest>
    </div>
    <router-view></router-view>
  </div>
@@ -76,7 +80,8 @@ export default {
       const bottom = playlist.length > 0 ? '60px' : 0
       this.$refs.searchResult.style.bottom = bottom
       this.$refs.suggest.refresh()
-    }
+    },
+    saveSearch () {}
   }
 }
 </script>

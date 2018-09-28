@@ -41,3 +41,10 @@ export function saveSearch (query) {
   storage.set(SEARCH_KEY, searches)
   return searches
 }
+
+/**
+ * 获取本地存储的搜索数据
+ */
+export function loadSearch () {
+  return storage.get(SEARCH_KEY, [])
+}

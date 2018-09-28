@@ -37,7 +37,7 @@ export const randomPlay = function ({commit}, {list}) {
 
 // 插入歌曲
 export const insertSong = function ({commit, state}, song) {
-  // 使用slice方法浅拷贝数据，避免因为操作playlist，引起报错
+  // 使用slice方法浅拷贝数据，避免因为操作playlist影响vuex，引起报错
   // 播放列表
   let playlist = state.playlist.slice()
   let sequenceList = state.sequenceList.slice()

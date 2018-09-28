@@ -3,20 +3,41 @@
    <div class="search-box-wrapper">
     <search-box ref="searchBox" @query="onQueryChange"></search-box>
    </div>
+
+    <!-- 热门搜索词 -->
    <div class="shortcut-wrapper" v-show="!query">
-     <div class="shortcut">
-       <div class="hot-key">
-         <h1 class="title">热门搜索</h1>
-         <ul>
-           <li
-            class="item"
-            v-for="(item, index) in hotKey"
-            :key="index"
-            @click="addQuery(item.k)">{{item.k}}</li>
-         </ul>
-       </div>
-     </div>
+     <scroll class="shortcut" :data="searchHistory">
+       <div>
+        <!-- 热门搜索词 -->
+        <div class="hot-key">
+          <h1 class="title">热门搜索</h1>
+          <ul>
+            <li
+              class="item"
+              v-for="(item, index) in hotKey"
+              :key="index"
+              @click="addQuery(item.k)">{{item.k}}</li>
+          </ul>
+        </div>
+
+        <!-- 搜索历史 -->
+        <div class="search-history" v-show="searchHistory.length">
+          <h1 class="title">
+            <span class="text">搜索历史</span>
+            <span class="clear">
+              <i class="icon-clear"></i>
+            </span>
+          </h1>
+          <search-list
+            :searches="searchHistory"
+            @select="addQuery"
+            @delete="deleteSearchHistory"></search-list>
+        </div>
+      </div>
+     </scroll>
    </div>
+
+    <!-- 搜索内容 -->
    <div class="search-result" v-show="query" ref="searchResult">
      <suggest
       :query="query"
@@ -34,14 +55,19 @@ import {getHotKey} from 'api/search.js'
 import {ERR_OK} from 'api/config.js'
 import Suggest from 'components/suggest/suggest'
 import {playlistMixin} from 'common/js/mixins.js'
-import {mapActions} from 'vuex'
+import {mapActions, mapGetters, mapMutations} from 'vuex'
+import SearchList from 'base/search-list/search-list'
+import Scroll from 'base/scroll/scroll'
+import {deleteSearch} from 'common/js/cache.js'
 
 export default {
   name: 'search',
   mixins: [playlistMixin],
   components: {
     SearchBox,
-    Suggest
+    Suggest,
+    SearchList,
+    Scroll
   },
   data () {
     return {
@@ -51,6 +77,11 @@ export default {
       query: ''
     }
   },
+  computed: {
+    ...mapGetters([
+      'searchHistory'
+    ])
+  },
   created () {
     this._getHotKey()
   },
@@ -58,12 +89,15 @@ export default {
     ...mapActions([
       'saveSearchHistory'
     ]),
+    ...mapMutations({
+      setSearchHistory: 'SET_SEARCH_HISTORY'
+    }),
     // 获取数据
     _getHotKey () {
       getHotKey().then(res => {
         if (res.code === ERR_OK) {
           // console.log(res.data.hotkey)
-          this.hotKey = res.data.hotkey.slice(0, 20)
+          this.hotKey = res.data.hotkey.slice(0, 10)
         }
       })
     },
@@ -85,8 +119,13 @@ export default {
       this.$refs.searchResult.style.bottom = bottom
       this.$refs.suggest.refresh()
     },
+    // 保存搜索的内容
     saveSearch () {
       this.saveSearchHistory(this.query)
+    },
+    deleteSearchHistory (item) {
+      const searches = deleteSearch(item)
+      this.setSearchHistory(searches)
     }
   }
 }
@@ -120,6 +159,21 @@ export default {
               background $color-highlight-background
               font-size $font-size-medium
               color $color-text-d
+        .search-history
+          margin 0 20px
+          .title
+            display flex
+            align-items center
+            height 40px
+            font-size $font-size-medium
+            color $color-text-l
+            .text
+              flex 1
+            .clear
+              extend-click()
+              .icon-clear
+                font-size $font-size-medium
+                color $color-text-d
     .search-result
       position: fixed
       width: 100%

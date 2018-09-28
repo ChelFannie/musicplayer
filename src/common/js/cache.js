@@ -48,3 +48,29 @@ export function saveSearch (query) {
 export function loadSearch () {
   return storage.get(SEARCH_KEY, [])
 }
+
+/**
+ * 从本地储存中删除某项数据
+ * @param {String} query - 对比内容
+ */
+export function deleteSearch (query) {
+  let searches = storage.get(SEARCH_KEY, [])
+  deleteFromArray(searches, (item) => {
+    return item === query
+  })
+  storage.set(SEARCH_KEY, searches)
+  return searches
+}
+
+/**
+ * 从数组中删除某项内容
+ * @param {Array} arr - 数组
+ * @param {function} compare - 比较函数
+ */
+function deleteFromArray (arr, compare) {
+  // 查找待插入的值是否存于数组中
+  const index = arr.findIndex(compare)
+  if (index > -1) {
+    arr.splice(index, 1)
+  }
+}

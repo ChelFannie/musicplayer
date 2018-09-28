@@ -24,14 +24,14 @@
         <div class="search-history" v-show="searchHistory.length">
           <h1 class="title">
             <span class="text">搜索历史</span>
-            <span class="clear">
+            <span class="clear" @click="clearAllHistory">
               <i class="icon-clear"></i>
             </span>
           </h1>
           <search-list
             :searches="searchHistory"
             @select="addQuery"
-            @delete="deleteSearchHistory"></search-list>
+            @delete="deleteOne"></search-list>
         </div>
       </div>
      </scroll>
@@ -55,10 +55,10 @@ import {getHotKey} from 'api/search.js'
 import {ERR_OK} from 'api/config.js'
 import Suggest from 'components/suggest/suggest'
 import {playlistMixin} from 'common/js/mixins.js'
-import {mapActions, mapGetters, mapMutations} from 'vuex'
+import {mapActions, mapGetters} from 'vuex'
 import SearchList from 'base/search-list/search-list'
 import Scroll from 'base/scroll/scroll'
-import {deleteSearch} from 'common/js/cache.js'
+// import {deleteSearch} from 'common/js/cache.js'
 
 export default {
   name: 'search',
@@ -87,11 +87,13 @@ export default {
   },
   methods: {
     ...mapActions([
-      'saveSearchHistory'
+      'saveSearchHistory',
+      'deleteSearchHistory',
+      'clearSearchHistory'
     ]),
-    ...mapMutations({
-      setSearchHistory: 'SET_SEARCH_HISTORY'
-    }),
+    // ...mapMutations({
+    //   setSearchHistory: 'SET_SEARCH_HISTORY'
+    // }),
     // 获取数据
     _getHotKey () {
       getHotKey().then(res => {
@@ -123,9 +125,15 @@ export default {
     saveSearch () {
       this.saveSearchHistory(this.query)
     },
-    deleteSearchHistory (item) {
-      const searches = deleteSearch(item)
-      this.setSearchHistory(searches)
+    // 删除某一条搜索数据
+    deleteOne (item) {
+      // const searches = deleteSearch(item)
+      // this.setSearchHistory(searches)
+      this.deleteSearchHistory(item)
+    },
+    // 清空所有的历史搜集
+    clearAllHistory () {
+      this.clearSearchHistory()
     }
   }
 }

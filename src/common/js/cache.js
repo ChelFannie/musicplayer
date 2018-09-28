@@ -50,7 +50,7 @@ export function loadSearch () {
 }
 
 /**
- * 从本地储存中删除某项数据
+ * 删除数组中的某一项
  * @param {String} query - 对比内容
  */
 export function deleteSearch (query) {
@@ -73,4 +73,9 @@ function deleteFromArray (arr, compare) {
   if (index > -1) {
     arr.splice(index, 1)
   }
+}
+
+export function clearSearch () {
+  storage.remove(SEARCH_KEY)
+  return []
 }

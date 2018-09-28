@@ -6,7 +6,7 @@
 
     <!-- 热门搜索词 -->
    <div class="shortcut-wrapper" v-show="!query">
-     <scroll class="shortcut" :data="searchHistory">
+     <scroll class="shortcut" :data="searchHistory" ref="shortcut">
        <div>
         <!-- 热门搜索词 -->
         <div class="hot-key">
@@ -45,6 +45,10 @@
       @select="saveSearch"
       ref="suggest"></suggest>
    </div>
+   <confirm
+    ref="confirm"
+    text="是否清空"
+    @confirm="confirmClearHistory"></confirm>
    <router-view></router-view>
  </div>
 </template>
@@ -59,6 +63,7 @@ import {mapActions, mapGetters} from 'vuex'
 import SearchList from 'base/search-list/search-list'
 import Scroll from 'base/scroll/scroll'
 // import {deleteSearch} from 'common/js/cache.js'
+import Confirm from 'base/confirm/confirm'
 
 export default {
   name: 'search',
@@ -67,7 +72,8 @@ export default {
     SearchBox,
     Suggest,
     SearchList,
-    Scroll
+    Scroll,
+    Confirm
   },
   data () {
     return {
@@ -131,8 +137,13 @@ export default {
       // this.setSearchHistory(searches)
       this.deleteSearchHistory(item)
     },
-    // 清空所有的历史搜集
+    // 清空所有的历史搜索
     clearAllHistory () {
+      // this.clearSearchHistory()
+      this.$refs.confirm.show()
+    },
+    confirmClearHistory () {
+      this.$refs.confirm.hide()
       this.clearSearchHistory()
     }
   }

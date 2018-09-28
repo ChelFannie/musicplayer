@@ -34,6 +34,7 @@ import {getHotKey} from 'api/search.js'
 import {ERR_OK} from 'api/config.js'
 import Suggest from 'components/suggest/suggest'
 import {playlistMixin} from 'common/js/mixins.js'
+import {mapActions} from 'vuex'
 
 export default {
   name: 'search',
@@ -54,6 +55,9 @@ export default {
     this._getHotKey()
   },
   methods: {
+    ...mapActions([
+      'saveSearchHistory'
+    ]),
     // 获取数据
     _getHotKey () {
       getHotKey().then(res => {
@@ -81,7 +85,9 @@ export default {
       this.$refs.searchResult.style.bottom = bottom
       this.$refs.suggest.refresh()
     },
-    saveSearch () {}
+    saveSearch () {
+      this.saveSearchHistory(this.query)
+    }
   }
 }
 </script>

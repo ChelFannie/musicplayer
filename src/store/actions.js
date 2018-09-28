@@ -2,6 +2,7 @@
 import * as types from './mutation-types'
 import {shuffle} from 'common/js/util'
 import {playMode} from 'common/js/config'
+import {saveSearch} from 'common/js/cache'
 
 function findIndex (list, song) {
   return list.findIndex(item => item.id === song.id)
@@ -92,5 +93,5 @@ export const insertSong = function ({commit, state}, song) {
 
 // 保存搜索历史
 export const saveSearchHistory = function ({commit}, query) {
-
+  commit(types.SET_SEARCH_HISTORY, saveSearch(query))
 }

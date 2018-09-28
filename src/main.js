@@ -13,7 +13,7 @@ import VueLazyLoad from 'vue-lazyload'
 
 import 'common/stylus/index.styl'
 
-require('common/js/vconsole')
+// require('common/js/vconsole')
 
 Vue.use(VueLazyLoad, {
   // loading: './common/image/default.png'

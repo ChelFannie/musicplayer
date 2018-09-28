@@ -5,8 +5,8 @@
    </div>
 
     <!-- 热门搜索词 -->
-   <div class="shortcut-wrapper" v-show="!query">
-     <scroll class="shortcut" :data="searchHistory" ref="shortcut">
+   <div class="shortcut-wrapper" v-show="!query" ref="shortcutWrapper">
+     <scroll class="shortcut" :data="shortcut" ref="shortcut">
        <div>
         <!-- 热门搜索词 -->
         <div class="hot-key">
@@ -83,10 +83,24 @@ export default {
       query: ''
     }
   },
+  watch: {
+    // 当列表在清空输入框时，列表不会滚动，需要重新初始化scroll组件
+    query (newQuery) {
+      if (!newQuery) {
+        setTimeout(() => {
+          this.$refs.shortcut.refresh()
+        }, 20)
+      }
+    }
+  },
   computed: {
     ...mapGetters([
       'searchHistory'
-    ])
+    ]),
+    // 给scroll组件添加data的数据时，因为历史搜索记录是改变的，需要动态计算出来
+    shortcut () {
+      return this.hotKey.concat(this.searchHistory)
+    }
   },
   created () {
     this._getHotKey()
@@ -126,6 +140,9 @@ export default {
       const bottom = playlist.length > 0 ? '60px' : 0
       this.$refs.searchResult.style.bottom = bottom
       this.$refs.suggest.refresh()
+
+      this.$refs.shortcutWrapper.style.bottom = bottom
+      this.$refs.shortcut.refresh()
     },
     // 保存搜索的内容
     saveSearch () {

@@ -13,7 +13,7 @@ const SEARCH_MAX_LEN = 15
 function insertArray (arr, val, compare, maxLen) {
   // 查找待插入的值是否存于数组中
   const index = arr.findIndex(compare)
-  // 如果查找到在数组的第一个，则不行操作数组
+  // 如果查找到在数组的第一个，则不操作数组
   if (index === 0) {
     return
   }

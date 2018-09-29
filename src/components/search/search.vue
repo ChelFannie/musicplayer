@@ -45,6 +45,7 @@
       @select="saveSearch"
       ref="suggest"></suggest>
    </div>
+
    <confirm
     ref="confirm"
     text="是否清空"

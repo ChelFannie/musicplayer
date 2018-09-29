@@ -12,11 +12,18 @@
           </h1>
         </div>
 
-        <div ref="listContent" class="list-content">
+        <scroll
+          :data="sequenceList"
+          ref="listContent"
+          class="list-content">
           <ul ref="list">
-            <li class="item">
-              <i class="current"></i>
-              <span class="text"></span>
+            <li
+              class="item"
+              v-for="(item, index) in sequenceList"
+              :key="index"
+              @click="selectItem(item, index)">
+              <i class="current" :class="getCurrentIcon(item)"></i>
+              <span class="text">{{item.name}}</span>
               <span class="like">
                 <i class="icon-not-favorite"></i>
               </span>
@@ -25,7 +32,7 @@
               </span>
             </li>
           </ul>
-        </div>
+        </scroll>
 
         <div class="list-operate">
           <div class="add">
@@ -44,22 +51,57 @@
 </template>
 
 <script>
+import {mapGetters, mapMutations} from 'vuex'
+import Scroll from '../../base/scroll/scroll'
+import {playMode} from 'common/js/config'
+
 export default {
   name: 'playlist',
+  components: {
+    Scroll
+  },
   data () {
     return {
       showFlag: false
     }
   },
+  computed: {
+    ...mapGetters([
+      'sequenceList',
+      'currentSong',
+      'mode',
+      'playlist'
+    ])
+  },
   created () {
-
   },
   methods: {
+    ...mapMutations({
+      setCurrentIndex: 'SET_CURRENT_INDEX'
+    }),
     show () {
       this.showFlag = true
+      // 组件显示时，要重新计算高度
+      this.$nextTick(() => {
+        this.$refs.listContent.refresh()
+      })
     },
     hide () {
       this.showFlag = false
+    },
+    // 给当前播放的歌曲添加样式
+    getCurrentIcon (item) {
+      if (this.currentSong.id === item.id) {
+        return 'icon-play'
+      }
+      return ''
+    },
+    // 点击播放列表
+    selectItem (item, index) {
+      if (this.mode === playMode.random) {
+        index = this.playlist.findIndex(song => song.id === item.id)
+      }
+      this.setCurrentIndex(index)
     }
   }
 }

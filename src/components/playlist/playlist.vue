@@ -28,7 +28,7 @@
               <span class="like">
                 <i class="icon-not-favorite"></i>
               </span>
-              <span class="delete">
+              <span class="delete" @click.stop="deleteOne(item)">
                 <i class="icon-delete"></i>
               </span>
             </li>
@@ -52,7 +52,7 @@
 </template>
 
 <script>
-import {mapGetters, mapMutations} from 'vuex'
+import {mapGetters, mapMutations, mapActions} from 'vuex'
 import Scroll from '../../base/scroll/scroll'
 import {playMode} from 'common/js/config'
 
@@ -89,6 +89,9 @@ export default {
       setCurrentIndex: 'SET_CURRENT_INDEX',
       setPlayState: 'SET_PLAYING_STATE'
     }),
+    ...mapActions([
+      'deleteSong'
+    ]),
     show () {
       this.showFlag = true
       // 组件显示时，要重新计算高度
@@ -120,6 +123,13 @@ export default {
     scrollToCurrentSong (currentSong) {
       const index = this.sequenceList.findIndex(song => song.id === currentSong.id)
       this.$refs.listContent.scrollToElement(this.$refs.listItem[index], 300)
+    },
+    // 删除某一首歌曲
+    deleteOne (item) {
+      this.deleteSong(item)
+      if (!this.playlist) {
+        this.hide()
+      }
     }
   }
 }

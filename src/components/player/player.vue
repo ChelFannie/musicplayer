@@ -113,14 +113,13 @@
             <i :class="miniIcon" class="icon-mini" @click.stop="togglePlaying"></i>
           </progress-circle>
         </div>
-        <div class="control">
+        <div class="control" @click.stop="showPlaylist">
           <i class="icon-playlist"></i>
-          <!-- <i :class="miniIcon" @click.stop="togglePlaying"></i> -->
         </div>
       </div>
     </transition>
 
-    <playlist></playlist>
+    <playlist ref="playlist"></playlist>
     <audio
       ref="audio"
       :src="currentSong.url"
@@ -558,6 +557,10 @@ export default {
       this.$refs.lyricList.$el.style[transform] = `translate3d(${offsetWidth}px, 0, 0)`
       this.$refs.lyricList.$el.style[transitionDuration] = `0.3s`
       this.touch.initiated = false
+    },
+    // 展示播放列表
+    showPlaylist () {
+      this.$refs.playlist.show()
     }
   }
 }

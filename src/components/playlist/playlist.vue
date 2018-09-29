@@ -21,7 +21,8 @@
               class="item"
               v-for="(item, index) in sequenceList"
               :key="index"
-              @click="selectItem(item, index)">
+              @click="selectItem(item, index)"
+              ref="listItem">
               <i class="current" :class="getCurrentIcon(item)"></i>
               <span class="text">{{item.name}}</span>
               <span class="like">
@@ -65,6 +66,14 @@ export default {
       showFlag: false
     }
   },
+  watch: {
+    currentSong (newSong, oldSong) {
+      if (!this.showFlag || newSong.id === oldSong.id) {
+        return
+      }
+      this.scrollToCurrentSong(newSong)
+    }
+  },
   computed: {
     ...mapGetters([
       'sequenceList',
@@ -77,13 +86,15 @@ export default {
   },
   methods: {
     ...mapMutations({
-      setCurrentIndex: 'SET_CURRENT_INDEX'
+      setCurrentIndex: 'SET_CURRENT_INDEX',
+      setPlayState: 'SET_PLAYING_STATE'
     }),
     show () {
       this.showFlag = true
       // 组件显示时，要重新计算高度
       this.$nextTick(() => {
         this.$refs.listContent.refresh()
+        this.scrollToCurrentSong(this.currentSong)
       })
     },
     hide () {
@@ -102,6 +113,13 @@ export default {
         index = this.playlist.findIndex(song => song.id === item.id)
       }
       this.setCurrentIndex(index)
+      // 切换歌曲的播放状态
+      this.setPlayState(true)
+    },
+    // 让当前播放的歌曲，始终保持在第一个
+    scrollToCurrentSong (currentSong) {
+      const index = this.sequenceList.findIndex(song => song.id === currentSong.id)
+      this.$refs.listContent.scrollToElement(this.$refs.listItem[index], 300)
     }
   }
 }

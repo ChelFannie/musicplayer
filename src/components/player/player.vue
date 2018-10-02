@@ -131,7 +131,7 @@
 </template>
 
 <script>
-import {mapGetters, mapMutations} from 'vuex'
+import {mapMutations} from 'vuex'
 import animations from 'create-keyframe-animation'
 import {prefixStyle} from 'common/js/dom.js'
 import progressBar from 'base/progress-bar/progress-bar'
@@ -141,10 +141,12 @@ import {shuffle} from 'common/js/util.js'
 import Lyric from 'lyric-parser'
 import Scroll from 'base/scroll/scroll'
 import Playlist from 'components/playlist/playlist'
+import {playerMixin} from 'common/js/mixins.js'
 
 const transform = prefixStyle('transform')
 const transitionDuration = prefixStyle('transitionDuration')
 export default {
+  mixins: [playerMixin],
   components: {
     progressBar,
     progressCircle,
@@ -171,15 +173,15 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
-      'fullScreen',
-      'playlist',
-      'currentSong',
-      'playing',
-      'currentIndex',
-      'mode',
-      'sequenceList'
-    ]),
+    // ...mapGetters([
+    //   'fullScreen',
+    //   'playlist',
+    //   'currentSong',
+    //   'playing',
+    //   'currentIndex',
+    //   'mode',
+    //   'sequenceList'
+    // ]),
     // 控制大播放器的播放与暂停按钮显示
     playIcon () {
       return this.playing ? 'icon-pause' : 'icon-play'
@@ -198,11 +200,11 @@ export default {
     // 音乐播放进度条的百分比
     percent () {
       return this.currentTime / this.currentSong.duration
-    },
-    // 播放模式
-    iconMode () {
-      return this.mode === playMode.sequence ? 'icon-sequence' : (this.mode === playMode.loop ? 'icon-loop' : 'icon-random')
     }
+    // // 播放模式
+    // iconMode () {
+    //   return this.mode === playMode.sequence ? 'icon-sequence' : (this.mode === playMode.loop ? 'icon-loop' : 'icon-random')
+    // }
   },
   watch: {
     // 监听是否需要播放
@@ -246,11 +248,11 @@ export default {
   },
   methods: {
     ...mapMutations({
-      setFullScreen: 'SET_FULL_SCREEN',
-      setPlayingState: 'SET_PLAYING_STATE',
-      setCurrentIndex: 'SET_CURRENT_INDEX',
-      setMode: 'SET_MODE',
-      setPlayList: 'SET_PLAYLIST'
+      setFullScreen: 'SET_FULL_SCREEN'
+      // setPlayingState: 'SET_PLAYING_STATE',
+      // setCurrentIndex: 'SET_CURRENT_INDEX'
+      // setMode: 'SET_MODE',
+      // setPlayList: 'SET_PLAYLIST'
     }),
     // 将播放器变小
     back () {

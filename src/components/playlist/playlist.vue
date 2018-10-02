@@ -6,7 +6,7 @@
 
         <div class="list-header">
           <h1 class="title">
-            <i class="icon"></i>
+            <i class="icon" :class="iconMode" @click="changeMode"></i>
             <span class="text"></span>
             <span class="clear" @click="showConfirm"><i class="icon-clear"></i></span>
           </h1>
@@ -60,13 +60,15 @@
 </template>
 
 <script>
-import {mapGetters, mapMutations, mapActions} from 'vuex'
+import {mapMutations, mapActions} from 'vuex'
 import Scroll from '../../base/scroll/scroll'
 import {playMode} from 'common/js/config'
 import Confirm from '../../base/confirm/confirm'
+import {playerMixin} from 'common/js/mixins.js'
 
 export default {
   name: 'playlist',
+  mixins: [playerMixin],
   components: {
     Scroll,
     Confirm
@@ -85,12 +87,12 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
-      'sequenceList',
-      'currentSong',
-      'mode',
-      'playlist'
-    ])
+    // ...mapGetters([
+    //   'sequenceList',
+    //   'currentSong',
+    //   'mode',
+    //   'playlist'
+    // ])
   },
   created () {
   },

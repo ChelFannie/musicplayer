@@ -1,5 +1,5 @@
 // 定义公共的mixin方法，供多个组件使用
-import {mapGetters, mapMutations} from 'vuex'
+import {mapGetters, mapMutations, mapActions} from 'vuex'
 import {playMode} from 'common/js/config.js'
 import {shuffle} from 'common/js/util.js'
 
@@ -73,6 +73,42 @@ export const playerMixin = {
     resetCurrentIndex (list) {
       const index = list.findIndex(item => item.id === this.currentSong.id)
       this.setCurrentIndex(index)
+    }
+  }
+}
+
+// 公共的搜索框和搜索历史
+export const searchMixin = {
+  data () {
+    return {
+      // 查询内容
+      query: ''
+    }
+  },
+  computed: {
+    ...mapGetters([
+      'searchHistory'
+    ])
+  },
+  methods: {
+    ...mapActions([
+      'saveSearchHistory'
+    ]),
+    // 点击热门搜索词,设置输入框内容
+    addQuery (query) {
+      this.$refs.searchBox.setQuery(query)
+    },
+    // 接受子组件值
+    onQueryChange (query) {
+      this.query = query
+    },
+    // 列表滚动之前，让输入框失去焦点
+    blurInput () {
+      this.$refs.searchBox.blur()
+    },
+    // 保存搜索的内容
+    saveSearch () {
+      this.saveSearchHistory(this.query)
     }
   }
 }

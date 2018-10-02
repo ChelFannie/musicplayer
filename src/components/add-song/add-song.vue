@@ -8,18 +8,40 @@
           <i class="icon-close"></i>
         </div>
       </div>
-      <div class="search-box-wrapper"></div>
-      <div class="shortcut"></div>
-      <div class="search-result"></div>
+      <div class="search-box-wrapper">
+        <search-box
+          placeholder="搜索歌曲"
+          @query="onQueryChange"
+          ref="searchBox"></search-box>
+      </div>
+      <div class="shortcut" v-show="!query"></div>
+      <div class="search-result" v-show="query">
+        <suggest
+          :query="query"
+          :showSinger="showSinger"
+          @listScroll="blurInput"
+          @select="saveSearch"></suggest>
+      </div>
     </div>
   </transition>
 </template>
 
 <script>
+import SearchBox from 'base/search-box/search-box'
+import {searchMixin} from 'common/js/mixins.js'
+import Suggest from 'components/suggest/suggest'
+
 export default {
+  name: 'add-song',
+  mixins: [searchMixin],
+  components: {
+    SearchBox,
+    Suggest
+  },
   data () {
     return {
-      showFlag: false
+      showFlag: false,
+      showSinger: false
     }
   },
   created () {

@@ -131,7 +131,7 @@
 </template>
 
 <script>
-import {mapMutations} from 'vuex'
+import {mapMutations, mapActions} from 'vuex'
 import animations from 'create-keyframe-animation'
 import {prefixStyle} from 'common/js/dom.js'
 import progressBar from 'base/progress-bar/progress-bar'
@@ -172,15 +172,6 @@ export default {
     }
   },
   computed: {
-    // ...mapGetters([
-    //   'fullScreen',
-    //   'playlist',
-    //   'currentSong',
-    //   'playing',
-    //   'currentIndex',
-    //   'mode',
-    //   'sequenceList'
-    // ]),
     // 控制大播放器的播放与暂停按钮显示
     playIcon () {
       return this.playing ? 'icon-pause' : 'icon-play'
@@ -245,6 +236,9 @@ export default {
     ...mapMutations({
       setFullScreen: 'SET_FULL_SCREEN'
     }),
+    ...mapActions([
+      'savePlayHistory'
+    ]),
     // 将播放器变小
     back () {
       this.setFullScreen(false)
@@ -351,6 +345,7 @@ export default {
     // 当浏览器能够开始播放指定的音频/视频时，发生 canplay 事件
     ready () {
       this.songReady = true
+      this.savePlayHistory(this.currentSong)
     },
     error () {
       this.songReady = true

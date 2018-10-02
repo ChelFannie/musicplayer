@@ -1,6 +1,6 @@
 // 存储所有的状态
 import {playMode} from 'common/js/config'
-import {loadSearch} from 'common/js/cache'
+import {loadSearch, loadPlayHistory} from 'common/js/cache'
 
 const state = {
   singer: {},
@@ -23,7 +23,9 @@ const state = {
   // 搜索历史
   // searchHistory: []
   // 结合本地存储获取最新的搜索历史的数据
-  searchHistory: loadSearch()
+  searchHistory: loadSearch(),
+  // 播放历史
+  playHistory: loadPlayHistory()
 }
 
 export default state

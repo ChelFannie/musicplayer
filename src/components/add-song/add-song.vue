@@ -4,7 +4,7 @@
     <div class="add-song" v-show="showFlag" @click.stop>
       <div class="header">
         <h1 class="title">添加歌曲到列表</h1>
-        <div class="close">
+        <div class="close" @click="hide">
           <i class="icon-close"></i>
         </div>
       </div>
@@ -14,7 +14,9 @@
           @query="onQueryChange"
           ref="searchBox"></search-box>
       </div>
-      <div class="shortcut" v-show="!query"></div>
+      <div class="shortcut" v-show="!query">
+        <switches :switches="switches" :current-index="currentIndex" @switch="switchItem"></switches>
+      </div>
       <div class="search-result" v-show="query">
         <suggest
           :query="query"
@@ -30,18 +32,25 @@
 import SearchBox from 'base/search-box/search-box'
 import {searchMixin} from 'common/js/mixins.js'
 import Suggest from 'components/suggest/suggest'
+import Switches from 'base/switches/switches'
 
 export default {
   name: 'add-song',
   mixins: [searchMixin],
   components: {
     SearchBox,
-    Suggest
+    Suggest,
+    Switches
   },
   data () {
     return {
       showFlag: false,
-      showSinger: false
+      showSinger: false,
+      switches: [
+        {name: '最近播放'},
+        {name: '搜索历史'}
+      ],
+      currentIndex: 0
     }
   },
   created () {
@@ -53,6 +62,9 @@ export default {
     },
     hide () {
       this.showFlag = false
+    },
+    switchItem (index) {
+      this.currentIndex = index
     }
   }
 }

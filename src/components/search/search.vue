@@ -80,8 +80,6 @@ export default {
     return {
       // 热门搜索词
       hotKey: []
-      // // 查询内容
-      // query: ''
     }
   },
   watch: {
@@ -95,9 +93,6 @@ export default {
     }
   },
   computed: {
-    // ...mapGetters([
-    //   'searchHistory'
-    // ]),
     // 给scroll组件添加data的数据时，因为历史搜索记录是改变的，需要动态计算出来
     shortcut () {
       return this.hotKey.concat(this.searchHistory)
@@ -108,13 +103,9 @@ export default {
   },
   methods: {
     ...mapActions([
-      // 'saveSearchHistory',
       'deleteSearchHistory',
       'clearSearchHistory'
     ]),
-    // ...mapMutations({
-    //   setSearchHistory: 'SET_SEARCH_HISTORY'
-    // }),
     // 获取数据
     _getHotKey () {
       getHotKey().then(res => {
@@ -124,18 +115,6 @@ export default {
         }
       })
     },
-    // // 点击热门搜索词,设置输入框内容
-    // addQuery (query) {
-    //   this.$refs.searchBox.setQuery(query)
-    // },
-    // // 接受子组件值
-    // onQueryChange (query) {
-    //   this.query = query
-    // },
-    // 列表滚动之前，让输入框失去焦点
-    // blurInput () {
-    //   this.$refs.searchBox.blur()
-    // },
     // 使用mixin对象，根据是否有小播放器，设置底部的bottom值
     handlePlaylist (playlist) {
       const bottom = playlist.length > 0 ? '60px' : 0
@@ -145,10 +124,6 @@ export default {
       this.$refs.shortcutWrapper.style.bottom = bottom
       this.$refs.shortcut.refresh()
     },
-    // // 保存搜索的内容
-    // saveSearch () {
-    //   this.saveSearchHistory(this.query)
-    // },
     // 删除某一条搜索数据
     deleteOne (item) {
       // const searches = deleteSearch(item)

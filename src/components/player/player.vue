@@ -207,6 +207,10 @@ export default {
   watch: {
     // 监听是否需要播放
     currentSong (newSong, oldSong) {
+      // 当歌曲被清空时，所有的都不执行
+      if (!newSong.id) {
+        return
+      }
       // 解决歌曲在暂停状态时，切换播放模式，歌曲会播放的bug
       if (newSong.id === oldSong.id) {
         return

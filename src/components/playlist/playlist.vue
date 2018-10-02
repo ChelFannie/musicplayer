@@ -8,7 +8,7 @@
           <h1 class="title">
             <i class="icon"></i>
             <span class="text"></span>
-            <span class="clear"><i class="icon-clear"></i></span>
+            <span class="clear" @click="showConfirm"><i class="icon-clear"></i></span>
           </h1>
         </div>
 
@@ -16,12 +16,14 @@
           :data="sequenceList"
           ref="listContent"
           class="list-content">
-          <ul ref="list">
+          <!-- <ul ref="list"> -->
+          <transition-group ref="list" name="list" tag="ul">
+            <!-- transition-group 必须有唯一的一个key -->
             <li
               class="item"
               v-for="(item, index) in sequenceList"
-              :key="index"
-              @click="selectItem(item, index)"
+              :key="item.id"
+              @click.stop="selectItem(item, index)"
               ref="listItem">
               <i class="current" :class="getCurrentIcon(item)"></i>
               <span class="text">{{item.name}}</span>
@@ -32,7 +34,8 @@
                 <i class="icon-delete"></i>
               </span>
             </li>
-          </ul>
+          </transition-group>
+          <!-- </ul> -->
         </scroll>
 
         <div class="list-operate">
@@ -47,6 +50,11 @@
         </div>
 
       </div>
+
+    <confirm
+      ref="confirm"
+      @confirm="confirmClearList"
+      text="是否清空列表"></confirm>
     </div>
   </transition>
 </template>
@@ -55,11 +63,13 @@
 import {mapGetters, mapMutations, mapActions} from 'vuex'
 import Scroll from '../../base/scroll/scroll'
 import {playMode} from 'common/js/config'
+import Confirm from '../../base/confirm/confirm'
 
 export default {
   name: 'playlist',
   components: {
-    Scroll
+    Scroll,
+    Confirm
   },
   data () {
     return {
@@ -90,7 +100,8 @@ export default {
       setPlayState: 'SET_PLAYING_STATE'
     }),
     ...mapActions([
-      'deleteSong'
+      'deleteSong',
+      'clearSongList'
     ]),
     show () {
       this.showFlag = true
@@ -130,6 +141,15 @@ export default {
       if (!this.playlist) {
         this.hide()
       }
+    },
+    // 展示清空列表确认框
+    showConfirm () {
+      this.$refs.confirm.show()
+    },
+    // 清空播放列表
+    confirmClearList () {
+      this.clearSongList()
+      this.hide()
     }
   }
 }

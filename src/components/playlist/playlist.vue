@@ -87,12 +87,6 @@ export default {
     }
   },
   computed: {
-    // ...mapGetters([
-    //   'sequenceList',
-    //   'currentSong',
-    //   'mode',
-    //   'playlist'
-    // ])
   },
   created () {
   },

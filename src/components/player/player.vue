@@ -216,7 +216,10 @@ export default {
       //   this.getLyric()
       // })
       clearTimeout(this.timer)
+      // 一秒延迟的原因，是为了歌曲从后台切换到前台时，能正常播放 13-1章节
+      // 也可以防止快速切换
       this.timer = setTimeout(() => {
+        // 在歌曲快速切换时，下面两行代码是同步执行，但是获取歌词是异步，可能会造成歌曲跟歌词不同步的现象
         this.$refs.audio.play()
         this.getLyric()
       }, 1000)
@@ -423,6 +426,10 @@ export default {
     // 获取歌词
     getLyric () {
       this.currentSong.getLyric().then(lyric => {
+        // 防止快速切换时，歌词跟歌曲没有同步
+        if (this.currentSong.lyric !== lyric) {
+          return
+        }
         this.currentLyric = new Lyric(lyric, this.handleLyric)
         // console.log(this.currentLyric)
         if (this.playing) {

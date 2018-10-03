@@ -7,21 +7,22 @@
       <div class="switches-wrapper">
         <switches :switches="switches" :current-index="currentIndex" @switch="switchItem"></switches>
       </div>
-      <div class="play-btn">
+      <div class="play-btn" @click="random">
         <i class="icon-play"></i>
         <span class="text">随机播放全部</span>
       </div>
-      <div class="list-wrapper">
+      <div class="list-wrapper" ref="listWrapper">
         <scroll
           :data="favoriteList"
           class="list-scroll"
-          v-if="currentIndex===0">
+          v-if="currentIndex===0"
+          ref="favoriteList">
           <div class="list-inner">
             <song-list :songs="favoriteList" @select="selectSong"></song-list>
           </div>
         </scroll>
         <scroll
-          ref="searchList"
+          ref="playHistory"
           v-if="currentIndex===1"
           class="list-scroll"
           :data="playHistory">
@@ -40,9 +41,11 @@ import SongList from 'base/song-list/song-list'
 import {mapGetters, mapActions} from 'vuex'
 import Scroll from 'base/scroll/scroll'
 import Song from 'common/js/song'
+import {playlistMixin} from 'common/js/mixins.js'
 
 export default {
   name: 'user-center',
+  mixins: [playlistMixin],
   components: {
     Switches,
     SongList,
@@ -68,7 +71,8 @@ export default {
   },
   methods: {
     ...mapActions([
-      'insertSong'
+      'insertSong',
+      'randomPlay'
     ]),
     back () {
       this.$router.back()
@@ -80,6 +84,23 @@ export default {
     // 选中某首歌
     selectSong (item) {
       this.insertSong(new Song(item))
+    },
+    // 随机播放歌曲
+    random () {
+      let list = this.currentIndex === 0 ? this.favoriteList : this.playHistory
+      if (list.length === 0) {
+        return
+      }
+      list = list.map(song => {
+        return new Song(song)
+      })
+      this.randomPlay({list})
+    },
+    handlePlaylist (playlist) {
+      const bottom = playlist.length ? '60px' : 0
+      this.$refs.listWrapper.style.bottom = bottom
+      this.$refs.favoriteList && this.$refs.favoriteList.refresh()
+      this.$refs.playHistory && this.$refs.playHistory.refresh()
     }
   }
 }

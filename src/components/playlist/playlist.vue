@@ -28,8 +28,8 @@
               ref="listItem">
               <i class="current" :class="getCurrentIcon(item)"></i>
               <span class="text">{{item.name}}</span>
-              <span class="like">
-                <i class="icon-not-favorite"></i>
+              <span class="like" @click.stop="toggleFavorite(item)">
+                <i :class="getFavoriteIcon(item)"></i>
               </span>
               <span class="delete" @click.stop="deleteOne(item)">
                 <i class="icon-delete"></i>
@@ -125,6 +125,7 @@ export default {
     },
     // 点击播放列表
     selectItem (item, index) {
+      console.log(33)
       if (this.mode === playMode.random) {
         index = this.playlist.findIndex(song => song.id === item.id)
       }

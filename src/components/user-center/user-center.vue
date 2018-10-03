@@ -1,7 +1,7 @@
 <template>
   <transition name="slide">
-    <div class="user-center" @click="back">
-      <div class="back">
+    <div class="user-center">
+      <div class="back" @click.stop="back">
         <i class="icon-back"></i>
       </div>
       <div class="switches-wrapper">
@@ -12,9 +12,14 @@
         <span class="text">随机播放全部</span>
       </div>
       <div class="list-wrapper">
-        <div class="list-inner">
-          <song-list></song-list>
-        </div>
+        <scroll
+          :data="favoriteList"
+          class="list-scroll"
+          v-if="currentIndex===0">
+          <div class="list-inner">
+            <song-list :songs="favoriteList"></song-list>
+          </div>
+        </scroll>
       </div>
     </div>
   </transition>
@@ -23,12 +28,15 @@
 <script>
 import Switches from 'base/switches/switches'
 import SongList from 'base/song-list/song-list'
+import {mapGetters} from 'vuex'
+import Scroll from 'base/scroll/scroll'
 
 export default {
   name: 'user-center',
   components: {
     Switches,
-    SongList
+    SongList,
+    Scroll
   },
   data () {
     return {
@@ -38,6 +46,11 @@ export default {
       ],
       currentIndex: 0
     }
+  },
+  computed: {
+    ...mapGetters([
+      'favoriteList'
+    ])
   },
   created () {
 
@@ -98,4 +111,14 @@ export default {
         display inline-block
         vertical-align middle
         font-size $font-size-small
+    .list-wrapper
+      position absolute
+      top 110px
+      bottom 0
+      width 100%
+      .list-scroll
+        height 100%
+        overflow hidden
+        .list-inner
+          padding 20px 30px
 </style>

@@ -208,13 +208,15 @@ export default {
         this.currentLyric.stop()
         this.currentTime = 0
         this.currentLineNum = 0
+        this.playLyric = ''
       }
       // this.$nextTick(() => {
       //   this.$refs.audio.play()
       //   // console.log(this.currentSong.getLyric())
       //   this.getLyric()
       // })
-      setTimeout(() => {
+      clearTimeout(this.timer)
+      this.timer = setTimeout(() => {
         this.$refs.audio.play()
         this.getLyric()
       }, 1000)

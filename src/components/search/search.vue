@@ -6,7 +6,7 @@
 
     <!-- 热门搜索词 -->
    <div class="shortcut-wrapper" v-show="!query" ref="shortcutWrapper">
-     <scroll class="shortcut" :data="shortcut" ref="shortcut">
+     <scroll class="shortcut" :data="shortcut" ref="shortcut" :refreshDelay="refreshDelay">
        <div>
         <!-- 热门搜索词 -->
         <div class="hot-key">
@@ -79,7 +79,8 @@ export default {
   data () {
     return {
       // 热门搜索词
-      hotKey: []
+      hotKey: [],
+      refreshDelay: 100
     }
   },
   watch: {

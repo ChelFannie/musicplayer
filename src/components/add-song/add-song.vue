@@ -21,7 +21,8 @@
             class="list-scroll"
             v-if="currentIndex===0"
             :data="playHistory"
-            ref="songList">
+            ref="songList"
+            :refreshDelay="refreshDelay">
             <div class="list-inner">
               <song-list :songs="playHistory" @select="selectSong"></song-list>
             </div>
@@ -91,7 +92,8 @@ export default {
         {name: '搜索历史'}
       ],
       currentIndex: 0,
-      delay: 3000
+      delay: 3000,
+      refreshDelay: 100
     }
   },
   computed: {

@@ -14,6 +14,7 @@
 
         <scroll
           :data="sequenceList"
+          :refreshDelay="refreshDelay"
           ref="listContent"
           class="list-content">
           <!-- <ul ref="list"> -->
@@ -79,7 +80,8 @@ export default {
   },
   data () {
     return {
-      showFlag: false
+      showFlag: false,
+      refreshDelay: 100
     }
   },
   watch: {

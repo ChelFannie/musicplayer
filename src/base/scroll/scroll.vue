@@ -35,6 +35,11 @@ export default {
     beforeScroll: {
       type: Boolean,
       default: false
+    },
+    // 让scroll刷新的缓动时间
+    refreshDelay: {
+      type: Number,
+      default: 20
     }
   },
   data () {
@@ -44,12 +49,12 @@ export default {
   },
   watch: {
     data () {
-      // setTimeout(() => {
-      //   this.refresh()
-      // }, 20)
-      this.$nextTick(() => {
+      setTimeout(() => {
         this.refresh()
-      })
+      }, this.refreshDelay)
+      // this.$nextTick(() => {
+      //   this.refresh()
+      // })
     }
   },
   created () {

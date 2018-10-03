@@ -113,8 +113,6 @@ export const searchMixin = {
     },
     // 删除某一条搜索数据
     deleteOne (item) {
-      // const searches = deleteSearch(item)
-      // this.setSearchHistory(searches)
       this.deleteSearchHistory(item)
     }
   }

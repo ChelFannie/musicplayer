@@ -45,8 +45,15 @@
           :query="query"
           :showSinger="showSinger"
           @listScroll="blurInput"
-          @select="saveSearch"></suggest>
+          @select="selectSuggest"></suggest>
       </div>
+
+      <top-tip :delay="delay" ref="topTip">
+        <div class="tip-title">
+          <i class="icon-ok"></i>
+          <span class="text">1首歌曲已经添加到播放列表</span>
+        </div>
+      </top-tip>
     </div>
   </transition>
 </template>
@@ -61,6 +68,7 @@ import {mapGetters, mapActions} from 'vuex'
 import Song from 'common/js/song'
 import Scroll from 'base/scroll/scroll'
 import SearchList from 'base/search-list/search-list'
+import TopTip from '../../base/top-tip/top-tip'
 
 export default {
   name: 'add-song',
@@ -71,7 +79,8 @@ export default {
     Switches,
     SongList,
     Scroll,
-    SearchList
+    SearchList,
+    TopTip
   },
   data () {
     return {
@@ -81,7 +90,8 @@ export default {
         {name: '最近播放'},
         {name: '搜索历史'}
       ],
-      currentIndex: 0
+      currentIndex: 0,
+      delay: 3000
     }
   },
   computed: {
@@ -116,7 +126,15 @@ export default {
     selectSong (item, index) {
       if (index !== 0) {
         this.insertSong(new Song(item))
+        this.$refs.topTip.show()
       }
+    },
+    // 选中搜索列表的某一行
+    selectSuggest () {
+      // 保存搜索历史
+      this.saveSearch()
+      // 展示提示框
+      this.$refs.topTip.show()
     }
   }
 }
@@ -167,4 +185,20 @@ export default {
           overflow hidden
           .list-inner
             padding 20px 30px
+    .search-result
+      position fixed
+      top 124px
+      bottom 0
+      width 100%
+    .tip-title
+      text-align center
+      padding 18px 0
+      font-size 0
+      .icon-ok
+        font-size $font-size-medium
+        color $color-theme
+        margin-right 4px
+      .text
+        font-size $font-size-medium
+        color $color-text
 </style>

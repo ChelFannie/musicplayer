@@ -21,9 +21,21 @@
             class="list-scroll"
             v-if="currentIndex===0"
             :data="playHistory"
-            ref="listScroll">
+            ref="songList">
             <div class="list-inner">
               <song-list :songs="playHistory" @select="selectSong"></song-list>
+            </div>
+          </scroll>
+          <scroll
+            ref="searchList"
+            v-if="currentIndex===1"
+            class="list-scroll"
+            :data="searchHistory">
+            <div class="list-inner">
+              <search-list
+                :searches="searchHistory"
+                @select="addQuery"
+                @delete="deleteOne"></search-list>
             </div>
           </scroll>
         </div>
@@ -48,6 +60,7 @@ import SongList from 'base/song-list/song-list'
 import {mapGetters, mapActions} from 'vuex'
 import Song from 'common/js/song'
 import Scroll from 'base/scroll/scroll'
+import SearchList from 'base/search-list/search-list'
 
 export default {
   name: 'add-song',
@@ -57,7 +70,8 @@ export default {
     Suggest,
     Switches,
     SongList,
-    Scroll
+    Scroll,
+    SearchList
   },
   data () {
     return {
@@ -86,7 +100,9 @@ export default {
       this.showFlag = true
       this.$nextTick(() => {
         if (this.currentIndex === 0) {
-          this.$refs.listScroll.refresh()
+          this.$refs.songList.refresh()
+        } else {
+          this.$refs.searchList.refresh()
         }
       })
     },

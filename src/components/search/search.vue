@@ -103,7 +103,7 @@ export default {
   },
   methods: {
     ...mapActions([
-      'deleteSearchHistory',
+      // 'deleteSearchHistory',
       'clearSearchHistory'
     ]),
     // 获取数据
@@ -124,12 +124,12 @@ export default {
       this.$refs.shortcutWrapper.style.bottom = bottom
       this.$refs.shortcut.refresh()
     },
-    // 删除某一条搜索数据
-    deleteOne (item) {
-      // const searches = deleteSearch(item)
-      // this.setSearchHistory(searches)
-      this.deleteSearchHistory(item)
-    },
+    // // 删除某一条搜索数据
+    // deleteOne (item) {
+    //   // const searches = deleteSearch(item)
+    //   // this.setSearchHistory(searches)
+    //   this.deleteSearchHistory(item)
+    // },
     // 清空所有的历史搜索
     clearAllHistory () {
       // this.clearSearchHistory()

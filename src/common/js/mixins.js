@@ -92,7 +92,8 @@ export const searchMixin = {
   },
   methods: {
     ...mapActions([
-      'saveSearchHistory'
+      'saveSearchHistory',
+      'deleteSearchHistory'
     ]),
     // 点击热门搜索词,设置输入框内容
     addQuery (query) {
@@ -109,6 +110,12 @@ export const searchMixin = {
     // 保存搜索的内容
     saveSearch () {
       this.saveSearchHistory(this.query)
+    },
+    // 删除某一条搜索数据
+    deleteOne (item) {
+      // const searches = deleteSearch(item)
+      // this.setSearchHistory(searches)
+      this.deleteSearchHistory(item)
     }
   }
 }

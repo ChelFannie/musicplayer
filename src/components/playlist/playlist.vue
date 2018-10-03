@@ -125,7 +125,6 @@ export default {
     },
     // 点击播放列表
     selectItem (item, index) {
-      console.log(33)
       if (this.mode === playMode.random) {
         index = this.playlist.findIndex(song => song.id === item.id)
       }

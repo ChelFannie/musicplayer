@@ -17,7 +17,16 @@
           class="list-scroll"
           v-if="currentIndex===0">
           <div class="list-inner">
-            <song-list :songs="favoriteList"></song-list>
+            <song-list :songs="favoriteList" @select="selectSong"></song-list>
+          </div>
+        </scroll>
+        <scroll
+          ref="searchList"
+          v-if="currentIndex===1"
+          class="list-scroll"
+          :data="playHistory">
+          <div class="list-inner">
+            <song-list :songs="playHistory" @select="selectSong"></song-list>
           </div>
         </scroll>
       </div>
@@ -28,8 +37,9 @@
 <script>
 import Switches from 'base/switches/switches'
 import SongList from 'base/song-list/song-list'
-import {mapGetters} from 'vuex'
+import {mapGetters, mapActions} from 'vuex'
 import Scroll from 'base/scroll/scroll'
+import Song from 'common/js/song'
 
 export default {
   name: 'user-center',
@@ -49,19 +59,27 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'favoriteList'
+      'favoriteList',
+      'playHistory'
     ])
   },
   created () {
 
   },
   methods: {
+    ...mapActions([
+      'insertSong'
+    ]),
     back () {
       this.$router.back()
     },
     // 切换switch
     switchItem (index) {
       this.currentIndex = index
+    },
+    // 选中某首歌
+    selectSong (item) {
+      this.insertSong(new Song(item))
     }
   }
 }

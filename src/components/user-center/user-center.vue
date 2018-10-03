@@ -31,6 +31,9 @@
           </div>
         </scroll>
       </div>
+      <div class="no-result-wrapper" v-show="noResult">
+        <no-result :title="noResultDesc"></no-result>
+      </div>
     </div>
   </transition>
 </template>
@@ -42,6 +45,7 @@ import {mapGetters, mapActions} from 'vuex'
 import Scroll from 'base/scroll/scroll'
 import Song from 'common/js/song'
 import {playlistMixin} from 'common/js/mixins.js'
+import NoResult from 'base/no-result/no-result'
 
 export default {
   name: 'user-center',
@@ -49,7 +53,8 @@ export default {
   components: {
     Switches,
     SongList,
-    Scroll
+    Scroll,
+    NoResult
   },
   data () {
     return {
@@ -64,7 +69,22 @@ export default {
     ...mapGetters([
       'favoriteList',
       'playHistory'
-    ])
+    ]),
+    // 控制没有数据提示的显示与隐藏
+    noResult () {
+      if (this.currentIndex === 0) {
+        return !this.favoriteList.length
+      } else if (this.currentIndex === 1) {
+        return !this.playHistory.length
+      }
+    },
+    noResultDesc () {
+      if (this.currentIndex === 0) {
+        return '暂无收藏歌曲'
+      } else {
+        return '你还没有听过歌曲'
+      }
+    }
   },
   created () {
 
@@ -88,6 +108,7 @@ export default {
     // 随机播放歌曲
     random () {
       let list = this.currentIndex === 0 ? this.favoriteList : this.playHistory
+      // 没有歌曲数据
       if (list.length === 0) {
         return
       }
@@ -160,4 +181,9 @@ export default {
         overflow hidden
         .list-inner
           padding 20px 30px
+    .no-result-wrapper
+      position absolute
+      top 50%
+      transform translateY(-50%)
+      width 100%
 </style>
